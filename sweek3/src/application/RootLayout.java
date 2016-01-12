@@ -1,16 +1,21 @@
 package application;
 
 import java.io.IOException;
+import java.util.Collections;
 
+import application.components.BatteryComponent;
+import application.components.ButtonComponent;
+import application.components.LEDComponent;
+import application.components.RelayComponent;
+import application.components.ResistorComponent;
+import application.components.SwitchComponent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -23,24 +28,21 @@ public class RootLayout extends AnchorPane{
 	@FXML AnchorPane right_pane;
 	@FXML VBox left_pane;
 
-	private DragIcon mDragOverIcon = null;
+	private ComponentIcon translucentIcon = null;
 	
-	private EventHandler<DragEvent> mIconDragOverRoot = null;
-	private EventHandler<DragEvent> mIconDragDropped = null;
-	private EventHandler<DragEvent> mIconDragOverRightPane = null;
+	private EventHandler<DragEvent> iconDragOverRoot = null;
+	private EventHandler<DragEvent> iconDragDropped = null;
+	private EventHandler<DragEvent> iconDragOverRightPane = null;
 	
 	public RootLayout() {
 		
-		FXMLLoader fxmlLoader = new FXMLLoader(
-				getClass().getResource("/RootLayout.fxml")
-				);
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/RootLayout.fxml"));
 		
 		fxmlLoader.setRoot(this); 
 		fxmlLoader.setController(this);
 		
 		try { 
-			fxmlLoader.load();
-        
+			fxmlLoader.load();    
 		} catch (IOException exception) {
 		    throw new RuntimeException(exception);
 		}
@@ -49,30 +51,30 @@ public class RootLayout extends AnchorPane{
 	@FXML
 	private void initialize() {
 		
-		//Add one icon that will be used for the drag-drop process
-		//This is added as a child to the root anchorpane so it can be visible
-		//on both sides of the split pane.
-		mDragOverIcon = new DragIcon();
+		// Add one icon that will be used for the drag-drop process
+		// This is added as a child to the root anchorpane so it can be visible
+		// on both sides of the split pane.
+		translucentIcon = new ComponentIcon();
 		
-		mDragOverIcon.setVisible(false);
-		mDragOverIcon.setOpacity(0.65);
-		getChildren().add(mDragOverIcon);
+		translucentIcon.setVisible(false);
+		translucentIcon.setOpacity(0.65);
+		getChildren().add(translucentIcon);
 		
-		//populate left pane with multiple colored icons for testing
-		for (int i = 0; i < 8; i++) {
+		// populate left pane with multiple component icons
+		for (int i = 0; i < ComponentType.values().length; i++) {
 			
-			DragIcon icn = new DragIcon();
+			ComponentIcon icn = new ComponentIcon();
 			
 			addDragDetection(icn);
 			
-			icn.setType(DragIconType.values()[i]);
+			icn.setType(ComponentType.values()[i]);
 			left_pane.getChildren().add(icn);
 		}
 		
 		buildDragHandlers();
 	}
 	
-	private void addDragDetection(DragIcon dragIcon) {
+	private void addDragDetection(ComponentIcon dragIcon) {
 		
 		dragIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
 
@@ -80,26 +82,26 @@ public class RootLayout extends AnchorPane{
 			public void handle(MouseEvent event) {
 
 				// set drag event handlers on their respective objects
-				base_pane.setOnDragOver(mIconDragOverRoot);
-				right_pane.setOnDragOver(mIconDragOverRightPane);
-				right_pane.setOnDragDropped(mIconDragDropped);
+				base_pane.setOnDragOver(iconDragOverRoot);
+				right_pane.setOnDragOver(iconDragOverRightPane);
+				right_pane.setOnDragDropped(iconDragDropped);
 				
 				// get a reference to the clicked DragIcon object
-				DragIcon icn = (DragIcon) event.getSource();
+				ComponentIcon icn = (ComponentIcon) event.getSource();
 				
-				//begin drag ops
-				mDragOverIcon.setType(icn.getType());
-				mDragOverIcon.relocateToPoint(new Point2D (event.getSceneX(), event.getSceneY()));
+				// begin drag ops
+				translucentIcon.setType(icn.getType());
+				translucentIcon.relocateToPoint(new Point2D (event.getSceneX(), event.getSceneY()));
             
 				ClipboardContent content = new ClipboardContent();
 				DragContainer container = new DragContainer();
 				
-				container.addData ("type", mDragOverIcon.getType().toString());
+				container.addData ("type", translucentIcon.getType().toString());
 				content.put(DragContainer.AddNode, container);
 
-				mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
-				mDragOverIcon.setVisible(true);
-				mDragOverIcon.setMouseTransparent(true);
+				translucentIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
+				translucentIcon.setVisible(true);
+				translucentIcon.setMouseTransparent(true);
 				event.consume();					
 			}
 		});
@@ -108,19 +110,18 @@ public class RootLayout extends AnchorPane{
 	private void buildDragHandlers() {
 		
 		//drag over transition to move widget form left pane to right pane
-		mIconDragOverRoot = new EventHandler <DragEvent>() {
+		iconDragOverRoot = new EventHandler <DragEvent>() {
 
 			@Override
 			public void handle(DragEvent event) {
 				
 				Point2D p = right_pane.sceneToLocal(event.getSceneX(), event.getSceneY());
 
-				//turn on transfer mode and track in the right-pane's context 
-				//if (and only if) the mouse cursor falls within the right pane's bounds.
-				if (!right_pane.boundsInLocalProperty().get().contains(p)) {
-					
+				// turn on transfer mode and track in the right-pane's context 
+				// if (and only if) the mouse cursor falls within the right pane's bounds.
+				if (!right_pane.boundsInLocalProperty().get().contains(p)) {	
 					event.acceptTransferModes(TransferMode.ANY);
-					mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+					translucentIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 					return;
 				}
 
@@ -128,35 +129,31 @@ public class RootLayout extends AnchorPane{
 			}
 		};
 		
-		mIconDragOverRightPane = new EventHandler <DragEvent> () {
+		iconDragOverRightPane = new EventHandler <DragEvent> () {
 
 			@Override
 			public void handle(DragEvent event) {
 
 				event.acceptTransferModes(TransferMode.ANY);
 				
-				//convert the mouse coordinates to scene coordinates,
-				//then convert back to coordinates that are relative to 
-				//the parent of mDragIcon.  Since mDragIcon is a child of the root
-				//pane, coodinates must be in the root pane's coordinate system to work
-				//properly.
-				mDragOverIcon.relocateToPoint(
-								new Point2D(event.getSceneX(), event.getSceneY())
-				);
+				// convert the mouse coordinates to scene coordinates,
+				// then convert back to coordinates that are relative to 
+				// the parent of translucentIcon.  Since translucentIcon is a child of the root
+				// pane, coordinates must be in the root pane's coordinate system to work
+				// properly.
+				translucentIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 				event.consume();
 			}
 		};
 				
-		mIconDragDropped = new EventHandler <DragEvent> () {
+		iconDragDropped = new EventHandler <DragEvent> () {
 
 			@Override
 			public void handle(DragEvent event) {
 				
-				DragContainer container = 
-						(DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
+				DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 				
-				container.addData("scene_coords", 
-						new Point2D(event.getSceneX(), event.getSceneY()));
+				container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
 				
 				ClipboardContent content = new ClipboardContent();
 				content.put(DragContainer.AddNode, container);
@@ -171,47 +168,67 @@ public class RootLayout extends AnchorPane{
 			@Override
 			public void handle (DragEvent event) {
 				
-				right_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
-				right_pane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
-				base_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
+				right_pane.removeEventHandler(DragEvent.DRAG_OVER, iconDragOverRightPane);
+				right_pane.removeEventHandler(DragEvent.DRAG_DROPPED, iconDragDropped);
+				base_pane.removeEventHandler(DragEvent.DRAG_OVER, iconDragOverRoot);
 								
-				mDragOverIcon.setVisible(false);
+				translucentIcon.setVisible(false);
 				
-				//Create node drag operation
-				DragContainer container = 
-						(DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
-				
-				if (container != null) {
-					if (container.getValue("scene_coords") != null) {
+				// Create node drag operation
+				DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 					
-						if (container.getValue("type").equals(DragIconType.cubic_curve.toString())) {
-							CubicCurveDemo curve = new CubicCurveDemo();
+				if (container != null) {
+					
+					if (container.getValue("scene_coords") != null) {
+						
+						Component component = null;
+						ComponentType componentType = ComponentType.valueOf(container.getValue("type"));
+						String componentName = componentType.toString();
+						
+						if (componentName.equals("Battery")){
 							
-							right_pane.getChildren().add(curve);
+							 component = new BatteryComponent();
+							 ((BatteryComponent) component).setName(componentName);
+							 
+						} else if (componentName.equals("Button")) {
 							
-							Point2D cursorPoint = container.getValue("scene_coords");
-
-							curve.relocateToPoint(
-									new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
-									);							
+							component = new ButtonComponent();
+							 ((ButtonComponent) component).setName(componentName);
+							 
+						} else if (componentName.equals("LED")) {
+							
+							component = new LEDComponent();
+							 ((LEDComponent) component).setName(componentName);
+							
+						} else if (componentName.equals("Relay")) {
+							
+							component = new RelayComponent();
+							 ((RelayComponent) component).setName(componentName);
+							
+						} else if (componentName.equals("Resistor")) {
+							
+							component = new ResistorComponent();
+							 ((ResistorComponent) component).setName(componentName);
+							
+						} else if (componentName.equals("Switch")) {
+							
+							component = new SwitchComponent();
+							 ((SwitchComponent) component).setName(componentName);
+							
 						}
-						else {
+								
+						component.setType(componentType);
 							
-							DraggableNode node = new DraggableNode();
-							
-							node.setType(DragIconType.valueOf(container.getValue("type")));
-							right_pane.getChildren().add(node);
+						right_pane.getChildren().add(component);
 	
-							Point2D cursorPoint = container.getValue("scene_coords");
-	
-							node.relocateToPoint(
-									new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
-									);
-						}
+						Point2D cursorPoint = container.getValue("scene_coords");
+						component.relocateToPoint(new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32));
+						
 					}
 				}
+				
 				/*
-				//Move node drag operation
+				// Move node drag operation
 				container = 
 						(DragContainer) event.getDragboard().getContent(DragContainer.DragNode);
 				
@@ -220,10 +237,9 @@ public class RootLayout extends AnchorPane{
 						System.out.println ("Moved node " + container.getValue("type"));
 				}
 				*/
-
-				//AddLink drag operation
-				container =
-						(DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+				
+				// AddWire drag operation
+				container = (DragContainer) event.getDragboard().getContent(DragContainer.AddWire);
 				
 				if (container != null) {
 					
@@ -233,34 +249,65 @@ public class RootLayout extends AnchorPane{
 
 					if (sourceId != null && targetId != null) {
 						
-						//	System.out.println(container.getData());
-						NodeLink link = new NodeLink();
-						
-						//add our link at the top of the rendering order so it's rendered first
-						right_pane.getChildren().add(0,link);
-						
-						DraggableNode source = null;
-						DraggableNode target = null;
+						Component source = null;
+						Component target = null;
 						
 						for (Node n: right_pane.getChildren()) {
 							
-							if (n.getId() == null)
+							if (n.getId() == null) {
 								continue;
+							}
 							
-							if (n.getId().equals(sourceId))
-								source = (DraggableNode) n;
+							if (n.getId().equals(sourceId)) {
+								source = (Component) n;
+							}
 						
-							if (n.getId().equals(targetId))
-								target = (DraggableNode) n;
+							if (n.getId().equals(targetId)) {
+								target = (Component) n;
+							}
 							
 						}
 						
-						if (source != null && target != null)
-							link.bindEnds(source, target);
+						if (Collections.frequency(source.getConnectedComponentList(), target) < 2) {
+							
+							// System.out.println(container.getData());
+							Wire wire = new Wire();
+							
+							//add our link at the top of the rendering order so it's rendered first
+							right_pane.getChildren().add(0,wire);
+							
+							
+							if (source != null && target != null) {
+								wire.bindEnds(source, target);
+							}
+							
+						} else {
+							
+							System.out.println("Already connected twice." + source + " <-> " + target);
+							
+						}
+			
 					}
 						
 				}
-
+				
+				System.out.println("===");
+				for (Node node : right_pane.getChildren()) {
+					if (node instanceof Component) {
+						Component component = (Component) node;
+						System.out.println("Component: " + component.getType().toString());
+						System.out.println("Connected Component: " + component.getConnectedComponentList().size());
+						for (Component connectedComponent : component.getConnectedComponentList()) {
+							System.out.println("->" + connectedComponent);
+						}
+						
+					} else if (node instanceof Wire){
+						Wire wire = (Wire) node;
+						System.out.println(wire);
+					}
+				}
+				
+				
 				event.consume();
 			}
 		});		
