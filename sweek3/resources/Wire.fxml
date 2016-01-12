@@ -7,6 +7,12 @@
 
 <fx:root stylesheets="@application.css" type="Pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <CubicCurve fx:id="node_link" controlX2="50.0" controlY1="10.0" controlY2="10.0" endX="10.0" fill="#1f93ff00" stroke="BLACK" />
+      <Line fx:id="start_line" fill="#1f93ff00" stroke="BLACK" />
+      <Line fx:id="second_line" fill="#1f93ff00" stroke="RED" />
+      <Line fx:id="third_line" fill="#1f93ff00" stroke="GREEN" />
+      <Line fx:id="fourth_line" fill="#1f93ff00" stroke="YELLOW" />
+      <Line fx:id="fifth_line" fill="#1f93ff00" stroke="GREY" />
+      <Line fx:id="sixth_line" fill="#1f93ff00" stroke="PURPLE" />
+      <Line fx:id="end_line" fill="#1f93ff00" stroke="BLUE" />
    </children>
 </fx:root>

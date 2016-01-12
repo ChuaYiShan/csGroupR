@@ -47,6 +47,7 @@ public class Component extends AnchorPane {
 
 	private final List<String> linkedWireIDs = new ArrayList<String>();
 	private final List<Component> connectedComponentList = new ArrayList<Component>();
+	private final List<Component> targetComponentList = new ArrayList<Component>();
 
 	public Component() {
 
@@ -104,6 +105,18 @@ public class Component extends AnchorPane {
 	
 	public List<Component> getConnectedComponentList() {
 		return this.connectedComponentList;
+	}
+	
+	public void addTargetComponent(Component component){
+		targetComponentList.add(component);
+	}
+	
+	public void deleteTargetComponent(Component component){
+		targetComponentList.remove(component);
+	}
+	
+	public List<Component> getTargetComponentList() {
+		return this.targetComponentList;
 	}
 
 	public void registerWire(String linkId) {
@@ -230,6 +243,7 @@ public class Component extends AnchorPane {
 				
 				for(Component component : connectedComponentList) {
 					component.unregisterComponent(self);
+					component.deleteTargetComponent(self);
 				}
 			}
 

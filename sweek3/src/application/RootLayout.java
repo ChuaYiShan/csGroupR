@@ -270,16 +270,24 @@ public class RootLayout extends AnchorPane{
 						
 						if (Collections.frequency(source.getConnectedComponentList(), target) < 2) {
 							
-							// System.out.println(container.getData());
-							Wire wire = new Wire();
-							
-							//add our link at the top of the rendering order so it's rendered first
-							right_pane.getChildren().add(0,wire);
-							
-							
-							if (source != null && target != null) {
-								wire.bindEnds(source, target);
+							if (!source.getTargetComponentList().contains(target)) {
+								
+								// System.out.println(container.getData());
+								Wire wire = new Wire();
+								
+								//add our link at the top of the rendering order so it's rendered first
+								right_pane.getChildren().add(0,wire);
+								
+								
+								if (source != null && target != null) {
+									wire.bindEnds(source, target);
+								}		
+								
+							} else {
+								
+								System.out.println("Source already connected to Target, try connecting Target to Source.");
 							}
+							
 							
 						} else {
 							
