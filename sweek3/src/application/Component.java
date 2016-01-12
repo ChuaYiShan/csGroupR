@@ -1,4 +1,4 @@
-	package application;
+package application;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -210,10 +210,14 @@ public class Component extends AnchorPane {
 		};
 
 		// close button click
-		close_button.setOnMouseClicked( new EventHandler <MouseEvent> () {
+		close_button.setOnMouseClicked(new EventHandler <MouseEvent> () {
 
 			@Override
 			public void handle(MouseEvent event) {
+				
+				Output.getInstance().clearOuput();
+				Output.getInstance().printOutput(self.getType().toString() + " removed.");
+				
 				AnchorPane parent  = (AnchorPane) self.getParent();
 				parent.getChildren().remove(self);
 
@@ -245,6 +249,7 @@ public class Component extends AnchorPane {
 					component.unregisterComponent(self);
 					component.deleteTargetComponent(self);
 				}
+				
 			}
 
 		});

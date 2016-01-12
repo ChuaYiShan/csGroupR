@@ -21,12 +21,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 public class RootLayout extends AnchorPane{
 
 	@FXML SplitPane base_pane;
 	@FXML AnchorPane right_pane;
 	@FXML VBox left_pane;
+	@FXML TextFlow output;
 
 	private ComponentIcon translucentIcon = null;
 	
@@ -63,20 +67,24 @@ public class RootLayout extends AnchorPane{
 		// populate left pane with multiple component icons
 		for (int i = 0; i < ComponentType.values().length; i++) {
 			
-			ComponentIcon icn = new ComponentIcon();
+			ComponentIcon componentIcon = new ComponentIcon();
 			
-			addDragDetection(icn);
+			addDragDetection(componentIcon);
 			
-			icn.setType(ComponentType.values()[i]);
-			left_pane.getChildren().add(icn);
+			componentIcon.setType(ComponentType.values()[i]);
+			left_pane.getChildren().add(componentIcon);
 		}
+		
+		new Output(output);
 		
 		buildDragHandlers();
 	}
 	
-	private void addDragDetection(ComponentIcon dragIcon) {
+
+	
+	private void addDragDetection(ComponentIcon componentIcon) {
 		
-		dragIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
+		componentIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
 
 			@Override
 			public void handle(MouseEvent event) {
@@ -87,10 +95,10 @@ public class RootLayout extends AnchorPane{
 				right_pane.setOnDragDropped(iconDragDropped);
 				
 				// get a reference to the clicked DragIcon object
-				ComponentIcon icn = (ComponentIcon) event.getSource();
+				ComponentIcon componentIcon = (ComponentIcon) event.getSource();
 				
 				// begin drag ops
-				translucentIcon.setType(icn.getType());
+				translucentIcon.setType(componentIcon.getType());
 				translucentIcon.relocateToPoint(new Point2D (event.getSceneX(), event.getSceneY()));
             
 				ClipboardContent content = new ClipboardContent();
@@ -174,6 +182,8 @@ public class RootLayout extends AnchorPane{
 								
 				translucentIcon.setVisible(false);
 				
+				Output.getInstance().clearOuput();
+				
 				// Create node drag operation
 				DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 					
@@ -227,23 +237,13 @@ public class RootLayout extends AnchorPane{
 					}
 				}
 				
-				/*
-				// Move node drag operation
-				container = 
-						(DragContainer) event.getDragboard().getContent(DragContainer.DragNode);
-				
-				if (container != null) {
-					if (container.getValue("type") != null)
-						System.out.println ("Moved node " + container.getValue("type"));
-				}
-				*/
 				
 				// AddWire drag operation
 				container = (DragContainer) event.getDragboard().getContent(DragContainer.AddWire);
 				
 				if (container != null) {
 					
-					//bind the ends of our link to the nodes whose id's are stored in the drag container
+					// bind the ends of our wire to the nodes whose id's are stored in the drag container
 					String sourceId = container.getValue("source");
 					String targetId = container.getValue("target");
 
@@ -268,6 +268,17 @@ public class RootLayout extends AnchorPane{
 							
 						}
 						
+						if (target == source) {
+							
+							Output.getInstance().printOutput("Try linking to another component.");
+							return;
+						}
+						
+						if (source == null || target == null) {
+							Output.getInstance().printOutput("No target component.");
+							return;
+						}
+						
 						if (Collections.frequency(source.getConnectedComponentList(), target) < 2) {
 							
 							if (!source.getTargetComponentList().contains(target)) {
@@ -278,20 +289,18 @@ public class RootLayout extends AnchorPane{
 								//add our link at the top of the rendering order so it's rendered first
 								right_pane.getChildren().add(0,wire);
 								
-								
-								if (source != null && target != null) {
-									wire.bindEnds(source, target);
-								}		
+								wire.bindEnds(source, target);
+								Output.getInstance().printOutput("Wire link " + source.getType().toString() + " with " + target.getType().toString());	
 								
 							} else {
 								
-								System.out.println("Source already connected to Target, try connecting Target to Source.");
+								Output.getInstance().printOutput("Source already connected to Target, try connecting Target to Source.");
 							}
 							
 							
 						} else {
 							
-							System.out.println("Already connected twice." + source + " <-> " + target);
+							Output.getInstance().printOutput(source.getType().toString() + " already connected to " + target.getType().toString() + " twice.");
 							
 						}
 			
@@ -320,4 +329,5 @@ public class RootLayout extends AnchorPane{
 			}
 		});		
 	}
+
 }

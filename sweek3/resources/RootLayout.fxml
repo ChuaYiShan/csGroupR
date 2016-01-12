@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import java.net.*?>
 <?import java.lang.*?>
@@ -18,7 +19,10 @@
                <content>
                   <VBox fx:id="left_pane" spacing="10.0" />
                </content></ScrollPane>
-          <AnchorPane fx:id="right_pane" />
+          <AnchorPane fx:id="right_pane">
+               <children>
+                  <TextFlow fx:id="output" maxHeight="-Infinity" prefHeight="50.0" prefWidth="100.0" AnchorPane.bottomAnchor="148.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
         </items>
       </SplitPane>
    </children>
