@@ -28,30 +28,46 @@
 	rgba(255, 255, 255, 0.35);
 }
 
-.icon-blue {
-	-fx-background-color: blue;
+.icon-battery {
+	-fx-background-image: url('../../sweek3/images/battery.gif');
+	-fx-background-size: 100% 80%
 }
 
-.icon-red {
-	-fx-background-color: red;
+.icon-button {
+	-fx-background-image: url('../../sweek3/images/button.gif');
+	-fx-background-size: 100% 100%
 }
 
-.icon-green {
-	-fx-background-color: green;
+.icon-buttonon {
+	-fx-background-image: url('../../sweek3/images/buttonon.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-relay {
+	-fx-background-image: url('../../sweek3/images/relay.gif');
+	-fx-background-size: 100% 100%
 }
 
 .icon-black {
 	-fx-background-color: black;
 }
 
-.icon-grey {
-	-fx-background-color: grey;
+.icon-resistor {
+	-fx-background-image: url('../../sweek3/images/resistor.gif');
+	-fx-background-size: 100% 100%
 }
 
-.icon-yellow {
-	-fx-background-color: yellow;
+.icon-led {
+	-fx-background-image: url('../../sweek3/images/led.jpg');
+	-fx-background-size: 110% 100%
 }
 
-.icon-purple {
-	-fx-background-color: purple;
+.icon-switchon {
+	-fx-background-image: url('../../sweek3/images/switchon.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-switch {
+	-fx-background-image: url('../../sweek3/images/switch.gif');
+	-fx-background-size: 100% 100% 
 }

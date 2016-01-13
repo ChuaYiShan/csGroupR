@@ -1,6 +1,8 @@
 package application.components;
 
 import application.Component;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 public class ButtonComponent extends Component {
 	
@@ -9,6 +11,29 @@ public class ButtonComponent extends Component {
 	
 	public ButtonComponent() {
 		this.on = false;
+		
+		this.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+		    @Override
+		    public void handle(MouseEvent mouseEvent)
+		    {            
+		        if(mouseEvent.getClickCount() == 2)
+		        {
+		    	
+		    		getStyleClass().clear();
+		    		getStyleClass().add("dragicon");
+		    		
+		    		if (on) {
+		    			getStyleClass().add("icon-button");
+		    		} else {
+		    			getStyleClass().add("icon-buttonon");
+		    		}
+		    		
+		    		on = !on;
+		            }
+
+		        }
+		    });
 	}
 	
 	public void setName(String name) {

@@ -151,27 +151,27 @@ public class Component extends AnchorPane {
 		switch (componentType) {
 
 		case Battery:
-			getStyleClass().add("icon-blue");
+			getStyleClass().add("icon-battery");
 			break;
 
 		case Button:
-			getStyleClass().add("icon-red");			
+			getStyleClass().add("icon-button");			
 			break;
 
 		case Relay:
-			getStyleClass().add("icon-green");
+			getStyleClass().add("icon-relay");
 			break;
 
 		case Resistor:
-			getStyleClass().add("icon-grey");
+			getStyleClass().add("icon-resistor");
 			break;
 
 		case Switch:
-			getStyleClass().add("icon-purple");
+			getStyleClass().add("icon-switch");
 			break;
 
 		case LED:
-			getStyleClass().add("icon-yellow");
+			getStyleClass().add("icon-led");
 			break;
 
 		default:
