@@ -27,7 +27,6 @@ public class BatteryComponent extends Component {
 		            dialog.setHeaderText("Change the voltage of the battery.");
 		            dialog.setContentText("Please enter the new value:");
 
-		            // Traditional way to get the response value.
 		            Optional<String> result = dialog.showAndWait();
 		            if (result.isPresent()){
 		            	setVoltage(Double.parseDouble(result.get()));

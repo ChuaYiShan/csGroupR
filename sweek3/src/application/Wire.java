@@ -55,8 +55,53 @@ public class Wire extends AnchorPane {
 
 	public void bindEnds(Component source, Component target) {
 		
-		
-		if (target.layoutXProperty().get() > source.layoutXProperty().get()){
+		if (source.getType() == ComponentType.Voltmeter ) {
+			
+			if (source.getTargetComponentList().size() < 1) {
+				
+				start_line.startXProperty().bind(Bindings.add(source.layoutXProperty(), (source.getWidth())));
+				start_line.startYProperty().bind(Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+				
+				end_line.startXProperty().bind(Bindings.add(target.layoutXProperty(), (target.getWidth())));		
+				end_line.startYProperty().bind(Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+				
+				start_line.endXProperty().bind(Bindings.add(start_line.startXProperty(),40));
+				start_line.endYProperty().bind(Bindings.add(start_line.startYProperty(),0));
+				
+				second_line.startXProperty().bind(Bindings.add(start_line.endXProperty(),0));
+				second_line.startYProperty().bind(Bindings.add(start_line.endYProperty(),0));
+				
+				second_line.endXProperty().bind(Bindings.add(second_line.startXProperty(),0));
+				second_line.endYProperty().bind(Bindings.add(end_line.startYProperty(),0));
+				
+				end_line.endXProperty().bind(Bindings.add(second_line.endXProperty(),0));
+				end_line.endYProperty().bind(Bindings.add(end_line.startYProperty(),0));
+
+				
+			} else if (source.getTargetComponentList().size() < 2) {
+				
+				start_line.startXProperty().bind(Bindings.add(source.layoutXProperty(),0));
+				start_line.startYProperty().bind(Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+				
+				end_line.startXProperty().bind(Bindings.add(target.layoutXProperty(), -(target.getWidth() / 2.0)));		
+				end_line.startYProperty().bind(Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+				
+				end_line.endXProperty().bind(Bindings.add(end_line.startXProperty(),40));
+				end_line.endYProperty().bind(Bindings.add(end_line.startYProperty(),0));
+				
+				start_line.endXProperty().bind(Bindings.add(end_line.endXProperty(),-40));
+				start_line.endYProperty().bind(Bindings.add(start_line.startYProperty(),0));
+				
+				second_line.startXProperty().bind(Bindings.add(start_line.endXProperty(),0));
+				second_line.startYProperty().bind(Bindings.add(start_line.endYProperty(),0));
+
+				second_line.endXProperty().bind(Bindings.add(second_line.startXProperty(),0));
+				second_line.endYProperty().bind(Bindings.add(end_line.endYProperty(),0));
+	
+				
+			}
+			
+		} else if (target.layoutXProperty().get() > source.layoutXProperty().get()){
 			
 			// target on right side of source
 			

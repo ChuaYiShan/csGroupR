@@ -173,7 +173,15 @@ public class Component extends AnchorPane {
 		case LED:
 			getStyleClass().add("icon-led");
 			break;
-
+			
+		case Ammeter:
+			getStyleClass().add("icon-led");
+			break;
+		
+		case Voltmeter:
+			getStyleClass().add("icon-led");
+			break;
+			
 		default:
 			break;
 		}
