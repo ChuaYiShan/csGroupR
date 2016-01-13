@@ -60,27 +60,35 @@ public class ComponentIcon extends AnchorPane{
 		
 			case Battery:
 				getStyleClass().add("icon-battery");
-			break;
+				break;
 	
 			case Button:
 				getStyleClass().add("icon-button");			
-			break;
+				break;
 	
 			case Relay:
 				getStyleClass().add("icon-relay");
-			break;
+				break;
 	
 			case Resistor:
 				getStyleClass().add("icon-resistor");
-			break;
+				break;
 	
 			case Switch:
 				getStyleClass().add("icon-switch");
-			break;
+				break;
 	
 			case LED:
 				getStyleClass().add("icon-led");
-			break;
+				break;
+			
+			case Ammeter:
+				getStyleClass().add("icon-led");
+				break;
+			
+			case Voltmeter:
+				getStyleClass().add("icon-led");
+				break;
 			
 			default:
 			break;

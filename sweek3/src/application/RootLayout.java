@@ -3,12 +3,14 @@ package application;
 import java.io.IOException;
 import java.util.Collections;
 
+import application.components.AmmeterComponent;
 import application.components.BatteryComponent;
 import application.components.ButtonComponent;
 import application.components.LEDComponent;
 import application.components.RelayComponent;
 import application.components.ResistorComponent;
 import application.components.SwitchComponent;
+import application.components.VoltmeterComponent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -223,6 +225,16 @@ public class RootLayout extends AnchorPane{
 							component = new SwitchComponent();
 							 ((SwitchComponent) component).setName(componentName);
 							
+						} else if (componentName.equals("Ammeter")) {
+							
+							component = new AmmeterComponent();
+							 ((AmmeterComponent) component).setName(componentName);
+							
+						} else if (componentName.equals("Voltmeter")) {
+							
+							component = new VoltmeterComponent();
+							 ((VoltmeterComponent) component).setName(componentName);
+							
 						}
 								
 						component.setType(componentType);
@@ -266,9 +278,15 @@ public class RootLayout extends AnchorPane{
 							
 						}
 						
-						if (target == source) {
+						if (target == source && source.getType() != ComponentType.Voltmeter) {
 							
 							Output.getInstance().printOutput("Try linking to another component.");
+							return;
+						}
+						
+						if (target.getType() == ComponentType.Voltmeter) {
+							
+							Output.getInstance().printOutput("Use Voltmeter to link to component instead.");
 							return;
 						}
 						
@@ -279,7 +297,7 @@ public class RootLayout extends AnchorPane{
 						
 						if (Collections.frequency(source.getConnectedComponentList(), target) < 2) {
 							
-							if (!source.getTargetComponentList().contains(target)) {
+							if (!source.getTargetComponentList().contains(target) || source.getType() == ComponentType.Voltmeter) {
 								
 								// System.out.println(container.getData());
 								Wire wire = new Wire();

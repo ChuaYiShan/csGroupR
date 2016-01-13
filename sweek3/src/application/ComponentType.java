@@ -6,5 +6,7 @@ public enum ComponentType {
 	LED,
 	Relay,
 	Resistor,
-	Switch
+	Switch,
+	Ammeter,
+	Voltmeter
 }
