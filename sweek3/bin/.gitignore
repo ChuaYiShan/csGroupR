@@ -1,10 +1,6 @@
-/CubicCurveDemo.fxml
-/DragIcon.fxml
-/DraggableNode.fxml
-/NodeLink.fxml
+/Component.fxml
+/ComponentIcon.fxml
 /RootLayout.fxml
+/Wire.fxml
 /application/
 /application.css
-/Component.fxml
-/Wire.fxml
-/ComponentIcon.fxml
