@@ -93,8 +93,7 @@ public class Component extends AnchorPane {
 
 	@FXML
 	private void initialize() {
-		
-		System.out.print("Component init");
+
 		buildNodeDragHandlers();
 		buildWireDragHandlers();
 
@@ -195,10 +194,6 @@ public class Component extends AnchorPane {
 			getStyleClass().add("icon-button");			
 			break;
 
-		case Relay:
-			getStyleClass().add("icon-relay");
-			break;
-
 		case Resistor:
 			getStyleClass().add("icon-resistor");
 			break;
@@ -212,11 +207,11 @@ public class Component extends AnchorPane {
 			break;
 
 		case Ammeter:
-			getStyleClass().add("icon-led");
+			getStyleClass().add("icon-ammeter");
 			break;
 
 		case Voltmeter:
-			getStyleClass().add("icon-led");
+			getStyleClass().add("icon-voltmeter");
 			break;
 
 		default:

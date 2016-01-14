@@ -54,9 +54,6 @@ public class CircuitElement {
 		else if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAADTEVE")==0){
 			this.aType = ComponentType.LED;
 		}
-		else if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAFUmVsYXk=")==0){
-			this.aType= ComponentType.Relay;
-		}
 		else if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAIUmVzaXN0b3I=")==0){
 			this.aType= ComponentType.Resistor;
 		}

@@ -10,7 +10,6 @@ import application.components.AmmeterComponent;
 import application.components.BatteryComponent;
 import application.components.ButtonComponent;
 import application.components.LEDComponent;
-import application.components.RelayComponent;
 import application.components.ResistorComponent;
 import application.components.SwitchComponent;
 import application.components.VoltmeterComponent;
@@ -136,8 +135,15 @@ public class RootLayout extends AnchorPane{
 			@Override
 			public void handle(ActionEvent event) {
 				ArrayList<String> values = runGetValues();
-				resistanceField.setText(values.get(1));
-				currentField.setText(values.get(2));
+				if(values.size() > 0){
+					resistanceField.setText(values.get(1));
+					currentField.setText(values.get(2));
+				} else {
+					output.setText("Invalid circuit");
+					resistanceField.clear();
+					resistanceField.clear();
+				}
+				
 			}
 		});
 		
@@ -193,10 +199,6 @@ public class RootLayout extends AnchorPane{
 				if(componentTypeString.equals("LED")){
 					component = new LEDComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType()); 
 					((LEDComponent) component).setName(componentTypeString);
-				}
-				if(componentTypeString.equals("Relay")){
-					component = new RelayComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((RelayComponent) component).setName(componentTypeString);
 				}
 				if(componentTypeString.equals("Resistor")){
 					component = new ResistorComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
@@ -382,11 +384,6 @@ public class RootLayout extends AnchorPane{
 							component = new LEDComponent();
 							((LEDComponent) component).setName(componentName);
 
-						} else if (componentName.equals("Relay")) {
-
-							component = new RelayComponent();
-							((RelayComponent) component).setName(componentName);
-
 						} else if (componentName.equals("Resistor")) {
 
 							component = new ResistorComponent();
@@ -510,13 +507,11 @@ public class RootLayout extends AnchorPane{
 			if (pathCollections.size() == 0) { return values; }
 			
 			double resistance = calculateResistance(pathCollections);
+			if (resistance == 0.0) { return values; }
 			values.add("" + (battery.getVoltage()));
 			values.add("" + (resistance));
 			values.add("" + (battery.getVoltage())/(resistance));
-			
-			// System.out.println("Total Voltage: " + battery.getVoltage());
-			// System.out.println("Total Resistance: " + resistance);
-			// System.out.println("Total Current: " + battery.getVoltage()/resistance);
+
 		}
 		
 		return values;
@@ -533,26 +528,17 @@ public class RootLayout extends AnchorPane{
 		whilerun: while(true) {
 
 			if (current == starting && newPath.size() > 0) {	
-				System.out.println("Valid");
-				//				for (Component c : newPath) {
-				//					System.out.print(c.getType().toString() + " ");
-				//				}
-				//				System.out.println("");		
+				// System.out.println("Valid");
 				pathCollections.add(newPath);
 				return;
 			}
 
 			if (current.getTargetComponentList().size() == 0) {
-				System.out.println("Invalid");
-				//				for (Component c : newPath) {
-				//					System.out.print(c.getType().toString() + " ");
-				//				}
-				//				System.out.println("");
+				// System.out.println("Invalid");
 				return;
 			}
 
 			if (current.getTargetComponentList().size() == 1) {
-				//				System.out.println("Add " + current.getType().toString() + " to path");
 				newPath.add(current);
 				current = current.getTargetComponentList().get(0);
 				continue;
@@ -627,17 +613,21 @@ public class RootLayout extends AnchorPane{
 						}
 					}
 				}
-				pathResistance.add(1/parallelPathResistance);
+				if(parallelPathResistance > 0) {
+					pathResistance.add(1/parallelPathResistance);
+				}
+				
 			}
 
 			double pResistance = 0.0;
 			for (double resistance : pathResistance) {
 				pResistance += resistance;
 			}
-
-			// System.out.println("pResistance: " + 1/pResistance);
-			circuitResistance +=  1/pResistance;
-
+			if(pResistance > 0) {
+				// System.out.println("pResistance: " + 1/pResistance);
+				circuitResistance +=  1/pResistance;
+			}
+			
 			if (!checkSameTail(pathCollections)) { break; }
 
 		}

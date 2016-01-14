@@ -66,10 +66,6 @@ public class ComponentIcon extends AnchorPane{
 			getStyleClass().add("icon-button");			
 			break;
 
-		case Relay:
-			getStyleClass().add("icon-relay");
-			break;
-
 		case Resistor:
 			getStyleClass().add("icon-resistor");
 			break;
@@ -83,11 +79,11 @@ public class ComponentIcon extends AnchorPane{
 			break;
 
 		case Ammeter:
-			getStyleClass().add("icon-led");
+			getStyleClass().add("icon-ammeter");
 			break;
 
 		case Voltmeter:
-			getStyleClass().add("icon-led");
+			getStyleClass().add("icon-voltmeter");
 			break;
 
 		default:
