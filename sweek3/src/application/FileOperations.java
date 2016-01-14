@@ -124,7 +124,7 @@ public class FileOperations {
 				FileChooser fileChooser = new FileChooser();
 
 				//Set extension filter
-				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
 				fileChooser.getExtensionFilters().add(extFilter);
 
 				//Show save file dialog
