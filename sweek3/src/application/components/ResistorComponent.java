@@ -12,10 +12,11 @@ public class ResistorComponent extends Component {
 	
 	private String componentName;
 	private double resistance;
-	private boolean on;
+	private double voltage;
 	
 	public ResistorComponent() {
 		this.resistance = 100.0;
+		this.voltage = 0.0;
 		this.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
 		    @Override
@@ -43,10 +44,10 @@ public class ResistorComponent extends Component {
 	}
 	
 	public ResistorComponent(String id, double xVal, double yVal, ComponentType type) {
-		
 		super( id,  xVal,  yVal,  type);
 		
 		this.resistance = 100.0;
+		this.voltage = 0.0;
 		this.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
 		    @Override
@@ -54,8 +55,6 @@ public class ResistorComponent extends Component {
 		    {            
 		        if(mouseEvent.getClickCount() == 2)
 		        {
-		    		
-		            System.out.println("Clicked");
 		            TextInputDialog dialog = new TextInputDialog(String.valueOf(getResistance())); 
 		            dialog.setTitle("Edit Resistor Value");
 		            dialog.setHeaderText("Change the resistance of the resistor.");
@@ -88,5 +87,13 @@ public class ResistorComponent extends Component {
 
 	public void setResistance(double resistance) {
 		this.resistance = resistance;
+	}
+
+	public double getVoltage() {
+		return voltage;
+	}
+
+	public void setVoltage(double voltage) {
+		this.voltage = voltage;
 	}
 }

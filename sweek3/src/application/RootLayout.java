@@ -1,6 +1,5 @@
 package application;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,19 +92,19 @@ public class RootLayout extends AnchorPane{
 		Button deleteBtn = new Button("Delete File");
 		Button clearBtn = new Button("Clear");
 		Button runBtn = new Button("Run");
-		
+
 		TextField resistanceField = new TextField();
 		resistanceField.setDisable(true);
 		resistanceField.setPrefWidth(70);
 		TextField currentField = new TextField();
 		currentField.setDisable(true);
 		currentField.setPrefWidth(70);
-		
+
 		Text ohms = new Text();
 		Text ampere = new Text();
 		ohms.setText("Ohms");
 		ampere.setText("Ampere");
-		
+
 		myToolBar.getItems().addAll(
 				openBtn,
 				saveBtn,
@@ -121,7 +120,7 @@ public class RootLayout extends AnchorPane{
 		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
 		new FileOperations().saveButtonClick(myWindow, saveBtn, right_pane);
 		new FileOperations().deleteFileButtonClick(myWindow, deleteBtn);
-		
+
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -129,7 +128,7 @@ public class RootLayout extends AnchorPane{
 				clearNodes();
 			}
 		});
-		
+
 		runBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -143,10 +142,10 @@ public class RootLayout extends AnchorPane{
 					resistanceField.clear();
 					resistanceField.clear();
 				}
-				
+
 			}
 		});
-		
+
 	}
 
 	private boolean batteryAdded(){
@@ -178,12 +177,12 @@ public class RootLayout extends AnchorPane{
 		for(CircuitElement element: myArrayList)
 		{
 			if (!element.getStringType().equalsIgnoreCase("WIRE")) {
-				
+
 				Component component = null;
-				
+
 				ComponentType componentType = element.getType();
 				String componentTypeString = componentType.toString();
-				
+
 				if(componentTypeString.equals("Ammeter")){
 					component = new AmmeterComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
 					((AmmeterComponent) component).setName(componentTypeString);
@@ -213,14 +212,12 @@ public class RootLayout extends AnchorPane{
 					((VoltmeterComponent) component).setName(componentTypeString);
 				}
 				
-				System.out.println(component.getLayoutX());			
-	
 				right_pane.getChildren().add(component);
-				
-				}
+
+			}
 
 		}
-		
+
 		for(CircuitElement element: myArrayList)
 		{
 			if (element.getStringType().equalsIgnoreCase("WIRE")) {
@@ -235,9 +232,9 @@ public class RootLayout extends AnchorPane{
 
 
 	}
-	
+
 	private Component findComponent(String id){
-		
+
 		Component component = null;
 		for (Node node : right_pane.getChildren()){
 			if (node instanceof Component) {
@@ -246,7 +243,7 @@ public class RootLayout extends AnchorPane{
 					return c;
 				}
 			}
-			
+
 		}
 		return component;
 	}
@@ -486,35 +483,128 @@ public class RootLayout extends AnchorPane{
 			}
 		});		
 	}
-	
+
 	ArrayList<ArrayList<Component>> pathCollections = new ArrayList<ArrayList<Component>>();
-	
+
 	public ArrayList<String> runGetValues(){
-		
+
 		ArrayList<String> values = new ArrayList<String>();
-		
+
 		BatteryComponent battery = null;
 		for (Node node : right_pane.getChildren()){
 			if (node instanceof BatteryComponent) {
 				battery = (BatteryComponent) node;
 			}
 		}
-		
+
 		if (battery != null) {
-			
+
 			pathCollections = new ArrayList<ArrayList<Component>>();
 			runCircuit(battery, battery, new ArrayList<Component>(), -1);
 			if (pathCollections.size() == 0) { return values; }
-			
+
 			double resistance = calculateResistance(pathCollections);
 			if (resistance == 0.0) { return values; }
 			values.add("" + (battery.getVoltage()));
 			values.add("" + (resistance));
 			values.add("" + (battery.getVoltage())/(resistance));
+			
+			pathCollections = new ArrayList<ArrayList<Component>>();
+			runCircuit(battery, battery, new ArrayList<Component>(), -1);
+			setVoltageForComponents(battery.getVoltage(), resistance, battery.getVoltage()/resistance);
+			setAmmeter((battery.getVoltage())/(resistance));
+		
+		}
 
+		return values;
+
+	}
+	
+	public void setAmmeter(double circuitCurrent){
+		
+		for (Node n : right_pane.getChildren()){
+			if (n instanceof AmmeterComponent){
+				System.out.println("fired");
+				((AmmeterComponent) n).setCurrent(circuitCurrent);
+			}
 		}
 		
-		return values;
+	}
+	
+	
+	public void setVoltageForComponents(double voltage, double resistance, double current){
+		
+		int numberOfPaths = pathCollections.size();
+
+		if ((numberOfPaths) == 0) { return; }
+
+		// Drop Head
+		for (ArrayList<Component> path : pathCollections) {
+			path.remove(0);
+		}
+
+		while (true) {
+
+			// Remove all same tail
+			while (checkSameTail(pathCollections)) {
+
+				ArrayList<Component> last = pathCollections.get(numberOfPaths-1);
+				Component tail = last.get(last.size()-1);
+				// Add Same Tail to Circuit Resistance
+				if (tail instanceof ResistorComponent) {
+					ResistorComponent resistor = (ResistorComponent) tail;
+					double resistorVoltage = current*resistor.getResistance();
+					resistor.setVoltage(resistorVoltage);
+					voltage -= resistorVoltage;
+					// System.out.println("series Resistance: " + ((ResistorComponent) tail).getResistance());
+				}
+				removeTail(pathCollections);		
+			}
+
+			// Do Parallel Resistance Calculation
+			List<Double> pathResistance = new ArrayList<Double>();
+			ArrayList<ArrayList<ResistorComponent>> parallelPathes = new ArrayList<ArrayList<ResistorComponent>>();
+			for (ArrayList<Component> path : pathCollections) {
+				double parallelPathResistance = 0.0;	
+				// remove series component along the path
+				ArrayList<ResistorComponent> resistorPath = new ArrayList<ResistorComponent>();
+				
+				while(path.size()>0) {
+					Component c = path.get(path.size()-1);
+					if (c instanceof ResistorComponent) {
+						parallelPathResistance += ((ResistorComponent) c).getResistance();
+						resistorPath.add((ResistorComponent) c);
+					}
+					path.remove(path.size()-1);
+					if (path.size()>0) {
+						if (inMoreThanOnePath(pathCollections, path.get(path.size()-1))){
+							break;
+						}
+					}
+				}
+				
+				if(parallelPathResistance > 0) {
+					parallelPathes.add(resistorPath);
+					pathResistance.add(parallelPathResistance);
+				}
+			}
+
+			double totalParallelResistance = 0.0;
+			for (double res : pathResistance) {
+				totalParallelResistance += res;
+			}
+			
+			for (int i = 0; i < pathResistance.size(); i++) {
+				double ratio = pathResistance.get(i)/totalParallelResistance;
+				ArrayList<ResistorComponent> resistorPath = parallelPathes.get(i);
+				for (int j = 0; j < resistorPath.size(); j++){
+					resistorPath.get(j).setVoltage(resistorPath.get(j).getResistance()*ratio*current);
+				}
+			}
+
+			if (!checkSameTail(pathCollections)) { break; }
+
+		}
 		
 	}
 
@@ -616,7 +706,7 @@ public class RootLayout extends AnchorPane{
 				if(parallelPathResistance > 0) {
 					pathResistance.add(1/parallelPathResistance);
 				}
-				
+
 			}
 
 			double pResistance = 0.0;
@@ -627,7 +717,7 @@ public class RootLayout extends AnchorPane{
 				// System.out.println("pResistance: " + 1/pResistance);
 				circuitResistance +=  1/pResistance;
 			}
-			
+
 			if (!checkSameTail(pathCollections)) { break; }
 
 		}
