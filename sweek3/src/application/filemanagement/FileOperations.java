@@ -1,4 +1,4 @@
-package application;
+package application.filemanagement;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import application.RootLayout;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -25,31 +26,26 @@ public class FileOperations {
 	public void openFileButtonClick(Window aWindow, Button btn, RootLayout root){
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
-				FileChooser fileChooser = new FileChooser();
 
+				FileChooser fileChooser = new FileChooser();
 				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
 				fileChooser.getExtensionFilters().add(extFilter);
 
 				File file = fileChooser.showOpenDialog(aWindow);
 				if (file == null) { return; }
-				
+
 				String path = file.getAbsolutePath();
 
-				if (file != null){
-					
-					root.clearNodes();
-					root.loadNodes(path);
-					
-					try {
-						readFile(path);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				root.clearNodes();
+				root.loadNodes(path);
 
+				//				try {
+				//					readFile(path);
+				//				} catch (IOException e) {
+				//					e.printStackTrace();
+				//				}
 			}
 		});
 	}
@@ -57,7 +53,6 @@ public class FileOperations {
 	private void readFile(String pathName) throws IOException{
 		InputStream input = new BufferedInputStream(new FileInputStream(pathName));
 		byte[] buffer = new byte[8192];
-
 		try {
 			for (int length = 0; (length = input.read(buffer)) != -1;) {
 				System.out.write(buffer, 0, length);
@@ -70,47 +65,34 @@ public class FileOperations {
 	public void saveButtonClick(Window aWindow, Button btn, AnchorPane right_pane){
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
-				FileChooser fileChooser = new FileChooser();
 
-				//Set extension filter
+				FileChooser fileChooser = new FileChooser();
 				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
 				fileChooser.getExtensionFilters().add(extFilter);
 
-				//Show save file dialog
 				File file = fileChooser.showSaveDialog(aWindow);
 
-				if(file != null){
-					//   SaveFile(new Parser().savefile(), file);
+				if (file != null){
 
 					BufferedWriter writer = null;
-					try
-					{
+					try {
 						writer = new BufferedWriter( new FileWriter(file));
 						writer.write(new FileCreate().savefile(right_pane));
-
 					}
-					catch ( IOException ex)
-					{
+					catch ( IOException ex) {
 						Logger.getLogger(RootLayout.class.getName()).log(Level.SEVERE, null, ex);
 					}
-					finally
-					{
-						try
-						{
-							if ( writer != null)
-								writer.close( );
+					finally {
+						try {
+							if ( writer != null) { writer.close( ); }
 						}
-						catch ( IOException ex)
-						{
+						catch ( IOException ex) {
 							Logger.getLogger(RootLayout.class.getName()).log(Level.SEVERE, null, ex);
 						}
 					}
 				}
-
-
 			}
 		});
 	}
@@ -118,19 +100,16 @@ public class FileOperations {
 	public void deleteFileButtonClick(Window aWindow, Button btn){
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
-				FileChooser fileChooser = new FileChooser();
 
-				//Set extension filter
+				FileChooser fileChooser = new FileChooser();
 				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
 				fileChooser.getExtensionFilters().add(extFilter);
 
-				//Show save file dialog
 				File file = fileChooser.showOpenDialog(aWindow);
 
-				if(file != null){
+				if (file != null){
 					Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 					alert.setTitle("Confirmation Dialog");
 					alert.setHeaderText("Warning!");
@@ -139,12 +118,10 @@ public class FileOperations {
 					Optional<ButtonType> result = alert.showAndWait();
 					if (result.get() == ButtonType.OK) {
 						file.delete();
-					}
-					System.out.println("\nFile deleted");	  
+					}  
 				} 
 			}
 		});
-
 	}
 
 }

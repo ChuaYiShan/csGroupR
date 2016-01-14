@@ -5,12 +5,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import application.components.AmmeterComponent;
-import application.components.BatteryComponent;
-import application.components.LEDComponent;
-import application.components.ResistorComponent;
-import application.components.SwitchComponent;
-import application.components.VoltmeterComponent;
+import application.components.Ammeter;
+import application.components.Battery;
+import application.components.LED;
+import application.components.Resistor;
+import application.components.Switch;
+import application.components.Voltmeter;
+import application.filemanagement.CircuitElement;
+import application.filemanagement.FileOperations;
+import application.filemanagement.FileParser;
+import application.model.Component;
+import application.model.ComponentIcon;
+import application.model.ComponentType;
+import application.model.Wire;
+import application.util.Output;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -99,10 +107,10 @@ public class RootLayout extends AnchorPane{
 		currentField.setDisable(true);
 		currentField.setPrefWidth(70);
 
-		Text ohms = new Text();
-		Text ampere = new Text();
-		ohms.setText("Ohms");
-		ampere.setText("Ampere");
+		Text ohmsLabel = new Text();
+		Text ampereLabel= new Text();
+		ohmsLabel.setText("Ohms");
+		ampereLabel.setText("Ampere");
 
 		myToolBar.getItems().addAll(
 				openBtn,
@@ -111,9 +119,9 @@ public class RootLayout extends AnchorPane{
 				clearBtn,
 				runBtn,
 				resistanceField,
-				ohms,
+				ohmsLabel,
 				currentField,
-				ampere
+				ampereLabel
 				);
 
 		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
@@ -121,7 +129,6 @@ public class RootLayout extends AnchorPane{
 		new FileOperations().deleteFileButtonClick(myWindow, deleteBtn);
 
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
 				clearNodes();
@@ -129,11 +136,11 @@ public class RootLayout extends AnchorPane{
 		});
 
 		runBtn.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
-				ArrayList<String> values = runGetValues();
+				ArrayList<String> values = Calculator.runGetValues(right_pane);
 				if(values.size() > 0){
+					output.setText("");
 					resistanceField.setText(values.get(1));
 					currentField.setText(values.get(2));
 				} else {
@@ -141,20 +148,9 @@ public class RootLayout extends AnchorPane{
 					resistanceField.clear();
 					resistanceField.clear();
 				}
-
 			}
 		});
 
-	}
-
-	private boolean batteryAdded(){
-		boolean battery = false;
-		for (Node node : right_pane.getChildren()){
-			if (node instanceof BatteryComponent) {
-				battery = true;
-			}
-		}
-		return battery;
 	}
 
 	public void clearNodes() {
@@ -173,38 +169,36 @@ public class RootLayout extends AnchorPane{
 
 		ArrayList<CircuitElement> myArrayList = new FileParser().parse(fileName);
 
-		for(CircuitElement element: myArrayList)
-		{
-			if (!element.getStringType().equalsIgnoreCase("WIRE")) {
+		for(CircuitElement element: myArrayList) {
+			
+			if (!element.getType().equalsIgnoreCase("WIRE")) {
 
 				Component component = null;
+				String type = element.getType();
 
-				ComponentType componentType = element.getType();
-				String componentTypeString = componentType.toString();
-
-				if(componentTypeString.equals("Ammeter")){
-					component = new AmmeterComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((AmmeterComponent) component).setName(componentTypeString);
+				if (type.equals("Ammeter")) {
+					component = new Ammeter(element.getId(), element.getxCoord(), element.getyCoord(), ComponentType.Ammeter);
+					((Ammeter) component).setName(type);
 				}
-				if(componentTypeString.equals("Battery")){
-					component = new BatteryComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((BatteryComponent) component).setName(componentTypeString);
+				if (type.equals("Battery")) {
+					component = new Battery(element.getId(), element.getxCoord(), element.getyCoord(), ComponentType.Battery);
+					((Battery) component).setName(type);
 				}
-				if(componentTypeString.equals("LED")){
-					component = new LEDComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType()); 
-					((LEDComponent) component).setName(componentTypeString);
+				if (type.equals("LED")) {
+					component = new LED(element.getId(), element.getxCoord(), element.getyCoord(), ComponentType.LED); 
+					((LED) component).setName(type);
 				}
-				if(componentTypeString.equals("Resistor")){
-					component = new ResistorComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((ResistorComponent) component).setName(componentTypeString);
+				if (type.equals("Resistor")) {
+					component = new Resistor(element.getId(), element.getxCoord(), element.getyCoord(), ComponentType.Resistor);
+					((Resistor) component).setName(type);
 				}
-				if(componentTypeString.equals("Switch")){
-					component = new SwitchComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((SwitchComponent) component).setName(componentTypeString);
+				if (type.equals("Switch")) {
+					component = new Switch(element.getId(), element.getxCoord(), element.getyCoord(), ComponentType.Switch);
+					((Switch) component).setName(type);
 				}
-				if(componentTypeString.equals("Voltmeter")){
-					component = new VoltmeterComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((VoltmeterComponent) component).setName(componentTypeString);
+				if (type.equals("Voltmeter")) {
+					component = new Voltmeter(element.getId(), element.getxCoord(), element.getyCoord(), ComponentType.Voltmeter);
+					((Voltmeter) component).setName(type);
 				}
 				
 				right_pane.getChildren().add(component);
@@ -215,7 +209,7 @@ public class RootLayout extends AnchorPane{
 
 		for(CircuitElement element: myArrayList)
 		{
-			if (element.getStringType().equalsIgnoreCase("WIRE")) {
+			if (element.getType().equalsIgnoreCase("WIRE")) {
 				Component source = findComponent(element.getSource());
 				Component target = findComponent(element.getTarget());
 				Wire wire = new Wire(element.getId());
@@ -224,25 +218,9 @@ public class RootLayout extends AnchorPane{
 				wire.setVisible(true);		
 			}
 		}
-
-
+	
 	}
-
-	private Component findComponent(String id){
-
-		Component component = null;
-		for (Node node : right_pane.getChildren()){
-			if (node instanceof Component) {
-				Component c = (Component) node;
-				if (c.getId().equals(id) ) {
-					return c;
-				}
-			}
-
-		}
-		return component;
-	}
-
+	
 	private void addDragDetection(ComponentIcon componentIcon) {
 
 		componentIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
@@ -363,40 +341,39 @@ public class RootLayout extends AnchorPane{
 
 						if (componentName.equals("Battery")){
 
-							component = new BatteryComponent();
-							((BatteryComponent) component).setName(componentName);
+							component = new Battery();
+							((Battery) component).setName(componentName);
 
 						} else if (componentName.equals("LED")) {
 
-							component = new LEDComponent();
-							((LEDComponent) component).setName(componentName);
+							component = new LED();
+							((LED) component).setName(componentName);
 
 						} else if (componentName.equals("Resistor")) {
 
-							component = new ResistorComponent();
-							((ResistorComponent) component).setName(componentName);
+							component = new Resistor();
+							((Resistor) component).setName(componentName);
 
 						} else if (componentName.equals("Switch")) {
 
-							component = new SwitchComponent();
-							((SwitchComponent) component).setName(componentName);
+							component = new Switch();
+							((Switch) component).setName(componentName);
 
 						} else if (componentName.equals("Ammeter")) {
 
-							component = new AmmeterComponent();
-							((AmmeterComponent) component).setName(componentName);
+							component = new Ammeter();
+							((Ammeter) component).setName(componentName);
 
 						} else if (componentName.equals("Voltmeter")) {
 
-							component = new VoltmeterComponent();
-							((VoltmeterComponent) component).setName(componentName);
+							component = new Voltmeter();
+							((Voltmeter) component).setName(componentName);
 
 						}
 
 						component.setType(componentType);
-
+						
 						right_pane.getChildren().add(component);
-
 						Point2D cursorPoint = container.getValue("scene_coords");
 						component.relocateToPoint(new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32));
 
@@ -418,21 +395,17 @@ public class RootLayout extends AnchorPane{
 						Component target = null;
 
 						for (Node n: right_pane.getChildren()) {
-
 							if (n.getId() == null) { continue; }
 							if (n.getId().equals(sourceId)) { source = (Component) n; }
 							if (n.getId().equals(targetId)) { target = (Component) n; }
-
 						}
 
 						if (target == source && source.getType() != ComponentType.Voltmeter) {
-
 							Output.getInstance().printOutput("Try linking to another component.");
 							return;
 						}
 
 						if (target.getType() == ComponentType.Voltmeter) {
-
 							Output.getInstance().printOutput("Use Voltmeter to link to component instead.");
 							return;
 						}
@@ -448,11 +421,10 @@ public class RootLayout extends AnchorPane{
 
 								// System.out.println(container.getData());
 								Wire wire = new Wire();
-
-								//add our link at the top of the rendering order so it's rendered first
+								// add our link at the top of the rendering order so it's rendered first
 								right_pane.getChildren().add(0,wire);
-
 								wire.bindEnds(source, target);
+								
 								Output.getInstance().printOutput("Wire link " + source.getType().toString() + " with " + target.getType().toString());	
 
 							} else {
@@ -473,278 +445,28 @@ public class RootLayout extends AnchorPane{
 			}
 		});		
 	}
-
-	ArrayList<ArrayList<Component>> pathCollections = new ArrayList<ArrayList<Component>>();
-
-	public ArrayList<String> runGetValues(){
-
-		ArrayList<String> values = new ArrayList<String>();
-
-		BatteryComponent battery = null;
+	
+	private Component findComponent(String id){
+		Component component = null;
 		for (Node node : right_pane.getChildren()){
-			if (node instanceof BatteryComponent) {
-				battery = (BatteryComponent) node;
+			if (node instanceof Component) {
+				Component c = (Component) node;
+				if (c.getId().equals(id) ) {
+					return c;
+				}
 			}
 		}
-
-		if (battery != null) {
-
-			pathCollections = new ArrayList<ArrayList<Component>>();
-			runCircuit(battery, battery, new ArrayList<Component>(), -1);
-			if (pathCollections.size() == 0) { return values; }
-
-			double resistance = calculateResistance(pathCollections);
-			if (resistance == 0.0) { return values; }
-			values.add("" + (battery.getVoltage()));
-			values.add("" + (resistance));
-			values.add("" + (battery.getVoltage())/(resistance));
-			
-			pathCollections = new ArrayList<ArrayList<Component>>();
-			runCircuit(battery, battery, new ArrayList<Component>(), -1);
-			setVoltageForComponents(battery.getVoltage(), resistance, battery.getVoltage()/resistance);
-			setAmmeter((battery.getVoltage())/(resistance));
-		
-		}
-
-		return values;
-
+		return component;
 	}
 	
-	public void setAmmeter(double circuitCurrent){
-		
-		for (Node n : right_pane.getChildren()){
-			if (n instanceof AmmeterComponent){
-				System.out.println("fired");
-				((AmmeterComponent) n).setCurrent(circuitCurrent);
+	private boolean batteryAdded(){
+		boolean battery = false;
+		for (Node node : right_pane.getChildren()){
+			if (node instanceof Battery) {
+				battery = true;
 			}
 		}
-		
-	}
-	
-	
-	public void setVoltageForComponents(double voltage, double resistance, double current){
-		
-		int numberOfPaths = pathCollections.size();
-
-		if ((numberOfPaths) == 0) { return; }
-
-		// Drop Head
-		for (ArrayList<Component> path : pathCollections) {
-			path.remove(0);
-		}
-
-		while (true) {
-
-			// Remove all same tail
-			while (checkSameTail(pathCollections)) {
-
-				ArrayList<Component> last = pathCollections.get(numberOfPaths-1);
-				Component tail = last.get(last.size()-1);
-				// Add Same Tail to Circuit Resistance
-				if (tail instanceof ResistorComponent) {
-					ResistorComponent resistor = (ResistorComponent) tail;
-					double resistorVoltage = current*resistor.getResistance();
-					resistor.setVoltage(resistorVoltage);
-					voltage -= resistorVoltage;
-					// System.out.println("series Resistance: " + ((ResistorComponent) tail).getResistance());
-				}
-				removeTail(pathCollections);		
-			}
-
-			// Do Parallel Resistance Calculation
-			List<Double> pathResistance = new ArrayList<Double>();
-			ArrayList<ArrayList<ResistorComponent>> parallelPathes = new ArrayList<ArrayList<ResistorComponent>>();
-			for (ArrayList<Component> path : pathCollections) {
-				double parallelPathResistance = 0.0;	
-				// remove series component along the path
-				ArrayList<ResistorComponent> resistorPath = new ArrayList<ResistorComponent>();
-				
-				while(path.size()>0) {
-					Component c = path.get(path.size()-1);
-					if (c instanceof ResistorComponent) {
-						parallelPathResistance += ((ResistorComponent) c).getResistance();
-						resistorPath.add((ResistorComponent) c);
-					}
-					path.remove(path.size()-1);
-					if (path.size()>0) {
-						if (inMoreThanOnePath(pathCollections, path.get(path.size()-1))){
-							break;
-						}
-					}
-				}
-				
-				if(parallelPathResistance > 0) {
-					parallelPathes.add(resistorPath);
-					pathResistance.add(parallelPathResistance);
-				}
-			}
-
-			double totalParallelResistance = 0.0;
-			for (double res : pathResistance) {
-				totalParallelResistance += res;
-			}
-			
-			for (int i = 0; i < pathResistance.size(); i++) {
-				double ratio = pathResistance.get(i)/totalParallelResistance;
-				ArrayList<ResistorComponent> resistorPath = parallelPathes.get(i);
-				for (int j = 0; j < resistorPath.size(); j++){
-					resistorPath.get(j).setVoltage(resistorPath.get(j).getResistance()*ratio*current);
-				}
-			}
-
-			if (!checkSameTail(pathCollections)) { break; }
-
-		}
-		
-	}
-
-	public void runCircuit(Component starting, Component current, ArrayList<Component> path, int counter) {
-
-		ArrayList<Component> newPath = new ArrayList<Component>();
-		for (Component c : path) {
-			newPath.add(c);
-		}
-
-		whilerun: while(true) {
-
-			if (current == starting && newPath.size() > 0) {	
-				// System.out.println("Valid");
-				pathCollections.add(newPath);
-				return;
-			}
-
-			if (current.getTargetComponentList().size() == 0) {
-				// System.out.println("Invalid");
-				return;
-			}
-
-			if (current.getTargetComponentList().size() == 1) {
-				newPath.add(current);
-				current = current.getTargetComponentList().get(0);
-				continue;
-			}
-
-			if (current.getTargetComponentList().size() > 1) {
-				newPath.add(current);
-				for (int i = 0; i < current.getTargetComponentList().size(); i++) {
-					if (counter > -1) {
-						if (current.getTargetComponentList().size() > counter && 
-								current.getTargetComponentList().get(counter).getTargetComponentList().size() > 0 ) {
-							current = current.getTargetComponentList().get(counter);
-						} else if (counter == 0) {
-							current = current.getTargetComponentList().get(counter+1);
-						} else {
-							current = current.getTargetComponentList().get(counter-1);
-						}		
-						continue whilerun;
-					} else {
-						runCircuit(starting, current.getTargetComponentList().get(i), newPath, i);
-					}		
-				}
-				return;
-			}
-
-		}
-	}
-
-	// == Calculation ==
-
-	public double calculateResistance(ArrayList<ArrayList<Component>> pathCollections) {
-
-		double circuitResistance = 0.0;
-		int numberOfPaths = pathCollections.size();
-
-		if ((numberOfPaths) == 0) { return 0.0; }
-
-		// Drop Head
-		for (ArrayList<Component> path : pathCollections) {
-			path.remove(0);
-		}
-
-		while (true) {
-
-			// Remove all same tail
-			while (checkSameTail(pathCollections)) {
-
-				ArrayList<Component> last = pathCollections.get(numberOfPaths-1);
-				Component tail = last.get(last.size()-1);
-				// Add Same Tail to Circuit Resistance
-				if (tail instanceof ResistorComponent) {
-					circuitResistance += ((ResistorComponent) tail).getResistance();
-					// System.out.println("series Resistance: " + ((ResistorComponent) tail).getResistance());
-				}
-				removeTail(pathCollections);
-			}
-
-			// Do Parallel Resistance Calculation
-			List<Double> pathResistance = new ArrayList<Double>();
-			for (ArrayList<Component> path : pathCollections) {
-				double parallelPathResistance = 0.0;	
-				// remove series component along the path
-				while(path.size()>0) {
-					Component c = path.get(path.size()-1);
-					if (c instanceof ResistorComponent) {
-						parallelPathResistance += ((ResistorComponent) c).getResistance();
-					}
-					path.remove(path.size()-1);
-					if (path.size()>0) {
-						if (inMoreThanOnePath(pathCollections, path.get(path.size()-1))){
-							break;
-						}
-					}
-				}
-				if(parallelPathResistance > 0) {
-					pathResistance.add(1/parallelPathResistance);
-				}
-
-			}
-
-			double pResistance = 0.0;
-			for (double resistance : pathResistance) {
-				pResistance += resistance;
-			}
-			if(pResistance > 0) {
-				// System.out.println("pResistance: " + 1/pResistance);
-				circuitResistance +=  1/pResistance;
-			}
-
-			if (!checkSameTail(pathCollections)) { break; }
-
-		}
-		return circuitResistance;
-
-	}
-
-	public boolean inMoreThanOnePath(ArrayList<ArrayList<Component>> pathCollections, Component c){
-		int count = 0;
-		for (ArrayList<Component> path : pathCollections) {
-			if (path.contains(c)){
-				count++;
-			}
-		}
-		return count>1;
-	}
-
-	public void removeTail(ArrayList<ArrayList<Component>> pathCollections) {
-		for (ArrayList<Component> path : pathCollections) {
-			path.remove(path.size()-1);
-		}
-	}
-
-	public boolean checkSameTail(ArrayList<ArrayList<Component>> pathCollections) {
-
-		// Check Same Tail
-		Component tail = null;
-		boolean sameTail = true;
-		for (ArrayList<Component> path : pathCollections) {
-			if (path.size() == 0) { return false; }
-			if (tail == null) { tail = path.get(path.size()-1); }
-			if (path.get(path.size()-1) != tail) {
-				sameTail = false;
-				break;
-			}
-		}
-		return sameTail;
+		return battery;
 	}
 
 }

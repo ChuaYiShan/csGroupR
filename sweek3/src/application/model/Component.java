@@ -1,4 +1,4 @@
-package application;
+package application.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
+import application.DragContainer;
+import application.util.Output;
+import application.util.Point2dSerial;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -50,7 +53,8 @@ public class Component extends AnchorPane {
 	private final List<Component> targetComponentList = new ArrayList<Component>();
 	private final List<Component> sourceComponentList = new ArrayList<Component>();
 
-	
+	private String componentName;
+
 	public Component() {
 
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Component.fxml"));
@@ -64,8 +68,8 @@ public class Component extends AnchorPane {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
-		//provide a universally unique identifier for this object
-		setId(UUID.randomUUID().toString());
+		// provide a universally unique identifier for this object
+		self.setId(UUID.randomUUID().toString());
 
 	}
 
@@ -82,14 +86,14 @@ public class Component extends AnchorPane {
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
-		
+
 		self.setId(id);
 		self.setVisible(true);
 		self.setType(type);
 		self.setLayoutX(xVal);
 		self.setLayoutY(yVal);
 	}
-	
+
 
 	@FXML
 	private void initialize() {
@@ -107,16 +111,20 @@ public class Component extends AnchorPane {
 		wire.setVisible(false);
 
 		parentProperty().addListener(new ChangeListener<Object>() {
-
 			@Override
-			public void changed(ObservableValue<?> observable,
-					Object oldValue, Object newValue) {
+			public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
 				right_pane = (AnchorPane) getParent();
-
 			}
-
 		});
+	}
 
+	public void setName(String name) {
+		componentName = name;
+		this.title_bar.setText(name);
+	}
+
+	public String getName(String name) {
+		return componentName;
 	}
 
 	public void registerComponent(Component component){
@@ -142,19 +150,19 @@ public class Component extends AnchorPane {
 	public List<Component> getTargetComponentList() {
 		return this.targetComponentList;
 	}
-	
+
 	public void addSourceComponent(Component component){
 		sourceComponentList.add(component);
 	}
-	
+
 	public void deleteSourceComponent(Component component){
 		sourceComponentList.remove(component);
 	}
-	
+
 	public List<Component> getSourceComponentList() {
 		return this.sourceComponentList;
 	}
-	
+
 	public void registerWire(String linkId) {
 		linkedWireIDs.add(linkId);
 	}
@@ -163,24 +171,9 @@ public class Component extends AnchorPane {
 		return this.linkedWireIDs;
 	}
 
-	public void relocateToPoint (Point2D p) {
-
-		// relocates the object to a point that has been converted to
-		// scene coordinates
-		Point2D localCoords = getParent().sceneToLocal(p);
-
-		relocate( 
-				(int) (localCoords.getX() - mDragOffset.getX()),
-				(int) (localCoords.getY() - mDragOffset.getY())
-				);
-	}
-
-	public ComponentType getType () { return componentType; }
-
 	public void setType (ComponentType type) {
 
-		componentType = type;
-
+		this.componentType = type;
 		getStyleClass().clear();
 		getStyleClass().add("dragicon");
 
@@ -215,32 +208,42 @@ public class Component extends AnchorPane {
 		}
 	}
 
+	public ComponentType getType () { 
+		return this.componentType; 
+	}
+
+	public void relocateToPoint (Point2D p) {
+
+		// relocates the object to a point that has been converted to
+		// scene coordinates
+		Point2D localCoords = getParent().sceneToLocal(p);
+		relocate( 
+				(int) (localCoords.getX() - mDragOffset.getX()),
+				(int) (localCoords.getY() - mDragOffset.getY())
+				);
+	}
+
 	public void buildNodeDragHandlers() {
 
+		// drag over to handle node dragging in the right pane view
 		mContextDragOver = new EventHandler <DragEvent>() {
 
-			// dragover to handle node dragging in the right pane view
 			@Override
 			public void handle(DragEvent event) {		
-
 				event.acceptTransferModes(TransferMode.ANY);				
 				relocateToPoint(new Point2dSerial(event.getSceneX(), event.getSceneY()));
-
 				event.consume();
 			}
 		};
 
-		// dragdrop for node dragging
+		// drag drop for node dragging
 		mContextDragDropped = new EventHandler <DragEvent> () {
 
 			@Override
 			public void handle(DragEvent event) {
-
 				getParent().setOnDragOver(null);
 				getParent().setOnDragDropped(null);
-
 				event.setDropCompleted(true);
-
 				event.consume();
 			}
 		};
@@ -260,9 +263,6 @@ public class Component extends AnchorPane {
 				// iterate each wire id connected to this node
 				// find it's corresponding component in the right-hand
 				// AnchorPane and delete it.
-
-				// Note:  other nodes connected to these links are not being
-				// notified that the wire has been removed.
 				for (ListIterator<String> iterId = linkedWireIDs.listIterator(); iterId.hasNext();) {
 
 					String id = iterId.next();
@@ -291,7 +291,7 @@ public class Component extends AnchorPane {
 
 		});
 
-		//drag detection for node dragging
+		// drag detection for node dragging
 		title_bar.setOnDragDetected ( new EventHandler <MouseEvent> () {
 
 			@Override
@@ -305,7 +305,6 @@ public class Component extends AnchorPane {
 
 				// begin drag ops
 				mDragOffset = new Point2D(event.getX(), event.getY());
-
 				relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 
 				ClipboardContent content = new ClipboardContent();
@@ -337,7 +336,6 @@ public class Component extends AnchorPane {
 
 				// Set up user-draggable wire
 				right_pane.getChildren().add(0,wire);					
-
 				wire.setVisible(false);
 
 				// Centre of component
@@ -350,11 +348,9 @@ public class Component extends AnchorPane {
 
 				// pass the UUID of the source node for later lookup
 				container.addData("source", getId());
-
 				content.put(DragContainer.AddWire, container);
 
 				startDragAndDrop(TransferMode.ANY).setContent(content);	
-
 				event.consume();
 			}
 		};
@@ -370,22 +366,16 @@ public class Component extends AnchorPane {
 				// get the drag data.  If it's null, abort.  
 				// This isn't the drag event we're looking for.
 				DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddWire);
-
-				if (container == null) {
-					return;
-				}
+				if (container == null) { return; }
 
 				// hide the draggable Wire and remove it from the right-hand AnchorPane's children
 				wire.setVisible(false);
 				right_pane.getChildren().remove(0);
 
-				AnchorPane link_handle = (AnchorPane) event.getSource();
-
 				ClipboardContent content = new ClipboardContent();
 
 				// pass the UUID of the target node for later lookup
 				container.addData("target", getId());
-
 				content.put(DragContainer.AddWire, container);
 
 				event.getDragboard().setContent(content);
@@ -405,11 +395,9 @@ public class Component extends AnchorPane {
 				if (!wire.isVisible()) {
 					wire.setVisible(true);
 				}
-
 				wire.setEnd(new Point2D(event.getX(), event.getY()));
 
 				event.consume();
-
 			}
 		};
 
@@ -429,10 +417,7 @@ public class Component extends AnchorPane {
 				event.setDropCompleted(true);
 				event.consume();
 			}
-
 		};
 
 	}
-
-
 }

@@ -1,4 +1,4 @@
-package application;
+package application.filemanagement;
 
 import java.util.ArrayList;
 
@@ -12,18 +12,17 @@ import org.xml.sax.helpers.DefaultHandler;
 public class FileParser {
 
 	ArrayList<CircuitElement> newList = new ArrayList<CircuitElement>();
-	String tmpValue;
 	CircuitElement tmpElement;
 
-	public void addToList (CircuitElement aTest){
-		newList.add(aTest);
+	public void addToList (CircuitElement element){
+		newList.add(element);
 	}
 
 	public ArrayList<CircuitElement> getList (){
 		return this.newList;
 	}
 
-	public ArrayList<CircuitElement> parse (String fileName){
+	public ArrayList<CircuitElement> parse(String fileName){
 
 		newList = new ArrayList<CircuitElement>();
 
@@ -78,36 +77,29 @@ public class FileParser {
 				public void characters(char ch[], int start, int length) throws SAXException {
 
 					if (xcoord) {
-						//System.out.println("X: " + new String(ch, start, length));
 						tmpElement.setxCoord(new String(ch,start,length));
 						xcoord = false;
 					}
 
 					if (ycoord) {
-						//	System.out.println("Y: " + new String(ch, start, length));
 						tmpElement.setyCoord(new String(ch,start,length));
 						ycoord = false;
 					}
 
 					if (source) {
-						//	System.out.println("Y: " + new String(ch, start, length));
 						tmpElement.setSource(new String(ch,start,length));
 						source = false;
 					}
 
 					if (target) {
-						//	System.out.println("Y: " + new String(ch, start, length));
 						tmpElement.setTarget(new String(ch,start,length));
 						target = false;
 					}
 
-					if (type) {
-						//		System.out.println("Type: " + new String(ch, start, length));
-						tmpElement.setType(new String(ch,start,length));
-						type = false;
+					if (type) {;
+					tmpElement.setType(new String(ch,start,length));
+					type = false;
 					}
-
-					//	System.out.println("char");
 
 				}
 			};

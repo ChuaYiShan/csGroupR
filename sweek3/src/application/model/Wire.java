@@ -1,4 +1,4 @@
-package application;
+package application.model;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -14,13 +14,12 @@ public class Wire extends AnchorPane {
 
 	@FXML Line start_line;
 	@FXML Line end_line;
-
 	@FXML Line second_line;
 	@FXML Line third_line;
 	@FXML Line fourth_line;
 	@FXML Line fifth_line;
 	@FXML Line sixth_line;
-	
+
 	private Component source;
 	private Component target;
 
@@ -40,7 +39,7 @@ public class Wire extends AnchorPane {
 		// provide a universally unique identifier for this object
 		setId(UUID.randomUUID().toString());
 	}
-	
+
 	public Wire(String wireId) {
 
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Wire.fxml"));
@@ -57,12 +56,28 @@ public class Wire extends AnchorPane {
 		// provide a universally unique identifier for this object
 		setId(wireId);
 	}
-	
+
 
 	@FXML
 	private void initialize() {}
 
+	
+	public Component getSource() {
+		return source;
+	}
 
+	public void setSource(Component source) {
+		this.source = source;
+	}
+
+	public Component getTarget() {
+		return target;
+	}
+
+	public void setTarget(Component target) {
+		this.target = target;
+	}
+	
 	public void setStart(Point2D startPoint) {
 		start_line.setStartX(startPoint.getX());
 		start_line.setStartY(startPoint.getY());		
@@ -74,7 +89,7 @@ public class Wire extends AnchorPane {
 	}	
 
 	public void bindEnds(Component source, Component target) {
-		
+
 		this.setSource(source);
 		this.setTarget(target);
 
@@ -120,7 +135,6 @@ public class Wire extends AnchorPane {
 
 				second_line.endXProperty().bind(Bindings.add(second_line.startXProperty(),0));
 				second_line.endYProperty().bind(Bindings.add(end_line.endYProperty(),0));
-
 
 			}
 
@@ -186,7 +200,7 @@ public class Wire extends AnchorPane {
 
 			sixth_line.endXProperty().bind(Bindings.add(sixth_line.startXProperty(),0));
 			sixth_line.endYProperty().bind(Bindings.add(target.layoutYProperty(), (target.getPrefWidth()/2)+10));
-			
+
 			end_line.startXProperty().bind(Bindings.add(sixth_line.endXProperty(),0));
 			end_line.startYProperty().bind(Bindings.add(sixth_line.endYProperty(),0));
 
@@ -197,28 +211,12 @@ public class Wire extends AnchorPane {
 
 		source.addTargetComponent(target);
 		target.addSourceComponent(source);
-		
+
 		source.registerWire(getId());
 		target.registerWire(getId());
 
 		source.registerComponent(target);
 		target.registerComponent(source);
-	}
-
-	public Component getSource() {
-		return source;
-	}
-
-	public void setSource(Component source) {
-		this.source = source;
-	}
-
-	public Component getTarget() {
-		return target;
-	}
-
-	public void setTarget(Component target) {
-		this.target = target;
 	}
 
 }

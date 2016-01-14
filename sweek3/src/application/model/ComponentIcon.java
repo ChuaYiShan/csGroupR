@@ -1,4 +1,4 @@
-package application;
+package application.model;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class ComponentIcon extends AnchorPane{
 
 	@FXML AnchorPane root_pane;
 
-	private ComponentType mType = null;
+	private ComponentType type = null;
 
 	public ComponentIcon() {
 
@@ -36,27 +36,21 @@ public class ComponentIcon extends AnchorPane{
 		// relocates the object to a point that has been converted to
 		// scene coordinates
 		Point2D localCoords = getParent().sceneToLocal(p);
-
 		relocate ( 
 				(int) (localCoords.getX() - (getBoundsInLocal().getWidth() / 2)),
 				(int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2))
 				);
 	}
 
-	public ComponentType getType () { return mType; }
 
 	public void setType (ComponentType type) {
 
-		mType = type;
+		this.type = type;
 
 		getStyleClass().clear();
 		getStyleClass().add("dragicon");
 
-		//added because the cubic curve will persist into other icons
-		if (this.getChildren().size() > 0)
-			getChildren().clear();
-
-		switch (mType) {
+		switch (type) {
 
 		case Battery:
 			getStyleClass().add("icon-battery");
@@ -86,4 +80,6 @@ public class ComponentIcon extends AnchorPane{
 			break;
 		}
 	}
+	
+	public ComponentType getType () { return type; }
 }

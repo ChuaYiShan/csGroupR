@@ -1,4 +1,4 @@
-package application;
+package application.filemanagement;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,16 +13,17 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import application.model.Component;
+import application.model.Wire;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.TextFlow;
+import javafx.scene.text.Text;
 
 class FileCreate implements Serializable {
 
 	public Object stringToObj(String s) throws IOException, ClassNotFoundException {
-		byte [] data = Base64.getDecoder().decode( s );
-		ObjectInputStream ois = new ObjectInputStream( 
-				new ByteArrayInputStream(  data ) );
+		byte [] data = Base64.getDecoder().decode(s);
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
 		Object o  = ois.readObject();
 		ois.close();
 		return o;
@@ -37,8 +38,8 @@ class FileCreate implements Serializable {
 	}
 
 	public String savefile(AnchorPane right_pane) {
-		
-		String xmlString=null;
+
+		String xmlString = null;
 		try {
 
 			StringWriter stringWriter = new StringWriter();
@@ -50,13 +51,12 @@ class FileCreate implements Serializable {
 
 			xMLStreamWriter.writeStartElement("Circuit");
 
-			for (Node aNode: right_pane.getChildren())
-			{
-				
+			for (Node aNode: right_pane.getChildren()) {
+
 				if (aNode instanceof Wire) {
-					
+
 					Wire wire = (Wire) aNode;
-					
+
 					xMLStreamWriter.writeStartElement("Wire");
 					xMLStreamWriter.writeAttribute("ID", wire.getId());
 
@@ -67,28 +67,23 @@ class FileCreate implements Serializable {
 					xMLStreamWriter.writeStartElement("target");
 					xMLStreamWriter.writeCharacters(String.valueOf(wire.getTarget().getId()));
 					xMLStreamWriter.writeEndElement();
-					
+
 					xMLStreamWriter.writeStartElement("type");
 					xMLStreamWriter.writeCharacters("WIRE");
 					xMLStreamWriter.writeEndElement();
-					
+
 					xMLStreamWriter.writeEndElement();
-					
-				}	
-				
-				
-				if (!(aNode.getLayoutX() > 0.0)) {
-					continue;
-				}
-				
-				if (aNode instanceof TextFlow) {
-					continue;
-				}
-				
+
+				}		
+
+				if (!(aNode.getLayoutX() > 0.0)) { continue; }
+
+				if (aNode instanceof Text) { continue; }
+
 				if (aNode instanceof Component) {
-					
+
 					Component c = (Component) aNode;
-					
+
 					xMLStreamWriter.writeStartElement("Node");
 					xMLStreamWriter.writeAttribute("ID", c.getId());
 
@@ -101,18 +96,15 @@ class FileCreate implements Serializable {
 					xMLStreamWriter.writeEndElement();
 
 					xMLStreamWriter.writeStartElement("type");
-					xMLStreamWriter.writeCharacters(objToString(c.getType()));
+					xMLStreamWriter.writeCharacters((c.getType().toString()));
 					xMLStreamWriter.writeEndElement();
-					
+
 					xMLStreamWriter.writeEndElement();
-					
-				}
-				
-			//	xMLStreamWriter.writeEndElement();
+
+				}		
 			}
 
 			xMLStreamWriter.writeEndElement();
-
 			xMLStreamWriter.writeEndDocument();
 
 			xMLStreamWriter.flush();
@@ -122,16 +114,13 @@ class FileCreate implements Serializable {
 
 			stringWriter.close();
 
-			// System.out.println(xmlString);
-
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
-			System.out.println("1");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("2");
+
 		}
 		return xmlString;
 	}
+
 }

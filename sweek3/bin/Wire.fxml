@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.layout.Pane?>
+
+<fx:root stylesheets="@application.css" type="Pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Line fx:id="start_line" fill="#1f93ff00" stroke="BLACK" />
+      <Line fx:id="second_line" fill="#1f93ff00" stroke="RED" />
+      <Line fx:id="third_line" fill="#1f93ff00" stroke="GREEN" />
+      <Line fx:id="fourth_line" fill="#1f93ff00" stroke="YELLOW" />
+      <Line fx:id="fifth_line" fill="#1f93ff00" stroke="GREY" />
+      <Line fx:id="sixth_line" fill="#1f93ff00" stroke="PURPLE" />
+      <Line fx:id="end_line" fill="#1f93ff00" stroke="BLUE" />
+   </children>
+</fx:root>

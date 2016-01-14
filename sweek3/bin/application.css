@@ -1,0 +1,69 @@
+.dragicon {
+	-fx-background-radius: 10; 
+}
+
+.cubic-icon {
+	-fx-fill:
+	rgba(80.0, 80.0, 80.0, 0.0);
+	
+	-fx-stroke: black;
+}
+
+.node-overlay {
+	-fx-background-radius: 10 10 0 0;
+}
+
+.right-link-handle:hover {
+	-fx-background-radius: 0 0 10 0;
+	-fx-background-color:
+	rgba(255, 255, 255, 0.35);
+}
+
+.left-link-handle:hover {
+	-fx-background-radius: 0 0 0 10;
+	-fx-background-color:
+	rgba(255, 255, 255, 0.35);
+}
+
+.icon-battery {
+	-fx-background-image: url('./images/battery.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-button {
+	-fx-background-image: url('./images/button.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-buttonon {
+	-fx-background-image: url('./images/buttonon.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-resistor {
+	-fx-background-image: url('./images/resistor.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-led {
+	-fx-background-image: url('./images/led.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-switchon {
+	-fx-background-image: url('./images/switchon.gif');
+	-fx-background-size: 100% 100%
+}
+
+.icon-switch {
+	-fx-background-image: url('./images/switch.gif');
+	-fx-background-size: 100% 100% 
+}
+.icon-ammeter {
+	-fx-background-image: url('./images/ammeter.gif');
+	-fx-background-size: 100% 100% 
+}
+.icon-voltmeter {
+	-fx-background-image: url('./images/voltmeter.gif');
+	-fx-background-size: 100% 100% 
+}
