@@ -22,6 +22,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -94,15 +95,28 @@ public class RootLayout extends AnchorPane{
 		Button clearBtn = new Button("Clear");
 		Button runBtn = new Button("Run");
 		
-		Text result = new Text();
-
+		TextField resistanceField = new TextField();
+		resistanceField.setDisable(true);
+		resistanceField.setPrefWidth(70);
+		TextField currentField = new TextField();
+		currentField.setDisable(true);
+		currentField.setPrefWidth(70);
+		
+		Text ohms = new Text();
+		Text ampere = new Text();
+		ohms.setText("Ohms");
+		ampere.setText("Ampere");
+		
 		myToolBar.getItems().addAll(
 				openBtn,
 				saveBtn,
 				deleteBtn,
 				clearBtn,
 				runBtn,
-				result
+				resistanceField,
+				ohms,
+				currentField,
+				ampere
 				);
 
 		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
@@ -122,8 +136,8 @@ public class RootLayout extends AnchorPane{
 			@Override
 			public void handle(ActionEvent event) {
 				ArrayList<String> values = runGetValues();
-				result.setText(values.get(1));
-				
+				resistanceField.setText(values.get(1));
+				currentField.setText(values.get(2));
 			}
 		});
 		
