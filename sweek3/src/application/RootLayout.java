@@ -1,5 +1,6 @@
 package application;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.ToolBar;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +28,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Window;
+import javafx.scene.control.Button;
 
 public class RootLayout extends AnchorPane{
 
@@ -33,6 +37,8 @@ public class RootLayout extends AnchorPane{
 	@FXML AnchorPane right_pane;
 	@FXML VBox left_pane;
 	@FXML TextFlow output;
+	@FXML Window myWindow;
+	@FXML ToolBar myToolBar;
 
 	private ComponentIcon translucentIcon = null;
 
@@ -80,8 +86,21 @@ public class RootLayout extends AnchorPane{
 		new Output(output);
 
 		buildDragHandlers();
-	}
 
+		Button openBtn = new Button("Open File");
+		Button saveBtn = new Button("Save File");
+		Button deleteBtn = new Button("Delete File");
+
+		myToolBar.getItems().addAll(
+				openBtn,
+				saveBtn,
+				deleteBtn
+				);
+
+		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
+		new FileOperations().saveButtonClick(myWindow, saveBtn, right_pane);
+		new FileOperations().deleteFileButtonClick(myWindow, deleteBtn);
+	}
 
 	private boolean batteryAdded(){
 		boolean battery = false;
@@ -91,6 +110,33 @@ public class RootLayout extends AnchorPane{
 			}
 		}
 		return battery;
+	}
+
+	public void clearNodes() {
+		ArrayList<Node> list =  new ArrayList<Node>();
+		for (Node n : right_pane.getChildren()) {
+			list.add(n);
+		}
+		for (Node n : list) {
+			if (n instanceof TextFlow) { continue; }
+			right_pane.getChildren().remove(n);
+		}
+	}
+
+	public void loadNodes(String fileName){
+
+		ArrayList<CircuitElement> myArrayList = new FileParser().parse(fileName);
+
+		for(CircuitElement element: myArrayList)
+		{
+			Component newNode = new Component(element.id, element.xCoord, 
+					element.yCoord, ComponentType.Ammeter);
+
+			System.out.println(newNode.getLayoutX());
+			right_pane.getChildren().add(newNode);
+		}
+
+
 	}
 
 	private void addDragDetection(ComponentIcon componentIcon) {
@@ -212,32 +258,49 @@ public class RootLayout extends AnchorPane{
 						String componentName = componentType.toString();
 
 						if (componentName.equals("Battery")){
+
 							component = new BatteryComponent();
 							((BatteryComponent) component).setName(componentName);
+
 						} else if (componentName.equals("Button")) {
+
 							component = new ButtonComponent();
 							((ButtonComponent) component).setName(componentName);
+
 						} else if (componentName.equals("LED")) {
+
 							component = new LEDComponent();
 							((LEDComponent) component).setName(componentName);
+
 						} else if (componentName.equals("Relay")) {
+
 							component = new RelayComponent();
 							((RelayComponent) component).setName(componentName);
+
 						} else if (componentName.equals("Resistor")) {
+
 							component = new ResistorComponent();
 							((ResistorComponent) component).setName(componentName);
+
 						} else if (componentName.equals("Switch")) {
+
 							component = new SwitchComponent();
 							((SwitchComponent) component).setName(componentName);
+
 						} else if (componentName.equals("Ammeter")) {
+
 							component = new AmmeterComponent();
 							((AmmeterComponent) component).setName(componentName);
+
 						} else if (componentName.equals("Voltmeter")) {
+
 							component = new VoltmeterComponent();
 							((VoltmeterComponent) component).setName(componentName);
+
 						}
 
 						component.setType(componentType);
+
 						right_pane.getChildren().add(component);
 
 						Point2D cursorPoint = container.getValue("scene_coords");
@@ -261,17 +324,22 @@ public class RootLayout extends AnchorPane{
 						Component target = null;
 
 						for (Node n: right_pane.getChildren()) {
+
 							if (n.getId() == null) { continue; }
 							if (n.getId().equals(sourceId)) { source = (Component) n; }
 							if (n.getId().equals(targetId)) { target = (Component) n; }
+
 						}
 
+
 						if (target == source && source.getType() != ComponentType.Voltmeter) {
+
 							Output.getInstance().printOutput("Try linking to another component.");
 							return;
 						}
 
 						if (target.getType() == ComponentType.Voltmeter) {
+
 							Output.getInstance().printOutput("Use Voltmeter to link to component instead.");
 							return;
 						}
@@ -282,6 +350,7 @@ public class RootLayout extends AnchorPane{
 						}
 
 						if (Collections.frequency(source.getConnectedComponentList(), target) < 2) {
+
 							if (!source.getTargetComponentList().contains(target) || source.getType() == ComponentType.Voltmeter) {
 
 								// System.out.println(container.getData());
@@ -294,12 +363,17 @@ public class RootLayout extends AnchorPane{
 								Output.getInstance().printOutput("Wire link " + source.getType().toString() + " with " + target.getType().toString());	
 
 							} else {
+
 								Output.getInstance().printOutput("Source already connected to Target, try connecting Target to Source.");
 							}
+
 						} else {
+
 							Output.getInstance().printOutput(source.getType().toString() + " already connected to " + target.getType().toString() + " twice.");
+
 						}
 					}
+
 				}
 
 				BatteryComponent battery = null;
@@ -337,25 +411,25 @@ public class RootLayout extends AnchorPane{
 
 			if (current == starting && newPath.size() > 0) {	
 				System.out.println("Valid");
-//				for (Component c : newPath) {
-//					System.out.print(c.getType().toString() + " ");
-//				}
-//				System.out.println("");		
+				//				for (Component c : newPath) {
+				//					System.out.print(c.getType().toString() + " ");
+				//				}
+				//				System.out.println("");		
 				pathCollections.add(newPath);
 				return;
 			}
 
 			if (current.getTargetComponentList().size() == 0) {
 				System.out.println("Invalid");
-//				for (Component c : newPath) {
-//					System.out.print(c.getType().toString() + " ");
-//				}
-//				System.out.println("");
+				//				for (Component c : newPath) {
+				//					System.out.print(c.getType().toString() + " ");
+				//				}
+				//				System.out.println("");
 				return;
 			}
 
 			if (current.getTargetComponentList().size() == 1) {
-//				System.out.println("Add " + current.getType().toString() + " to path");
+				//				System.out.println("Add " + current.getType().toString() + " to path");
 				newPath.add(current);
 				current = current.getTargetComponentList().get(0);
 				continue;
@@ -383,9 +457,9 @@ public class RootLayout extends AnchorPane{
 
 		}
 	}
-	
+
 	// == Calculation ==
-	
+
 	public double calculateResistance(ArrayList<ArrayList<Component>> pathCollections) {
 
 		double circuitResistance = 0.0;
