@@ -61,10 +61,10 @@ public class Wire extends AnchorPane {
 			// target on right side of source
 			
 			start_line.startXProperty().bind(Bindings.add(source.layoutXProperty(), (source.getWidth())));
-			start_line.startYProperty().bind(Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+			start_line.startYProperty().bind(Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)+10));
 
 			end_line.endXProperty().bind(Bindings.add(target.layoutXProperty(),0));		
-			end_line.endYProperty().bind(Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+			end_line.endYProperty().bind(Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)+10));
 
 			start_line.endXProperty().bind(Bindings.add(start_line.startXProperty(),40));
 			start_line.endYProperty().bind(Bindings.add(start_line.startYProperty(),0));
@@ -84,7 +84,7 @@ public class Wire extends AnchorPane {
 			// target on left side of source	
 			
 			start_line.startXProperty().bind(Bindings.add(source.layoutXProperty(), source.getWidth()));
-			start_line.startYProperty().bind(Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+			start_line.startYProperty().bind(Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)+10));
 
 			start_line.endXProperty().bind(Bindings.add(start_line.startXProperty(),40));
 			start_line.endYProperty().bind(Bindings.add(start_line.startYProperty(),0));
@@ -121,7 +121,7 @@ public class Wire extends AnchorPane {
 			sixth_line.startYProperty().bind(Bindings.add(fifth_line.endYProperty(),0));
 			
 			sixth_line.endXProperty().bind(Bindings.add(sixth_line.startXProperty(),0));
-			sixth_line.endYProperty().bind(Bindings.add(target.layoutYProperty(), target.getWidth()/2));
+			sixth_line.endYProperty().bind(Bindings.add(target.layoutYProperty(), (target.getWidth()/2)+10));
 			
 			end_line.startXProperty().bind(Bindings.add(sixth_line.endXProperty(),0));
 			end_line.startYProperty().bind(Bindings.add(sixth_line.endYProperty(),0));
