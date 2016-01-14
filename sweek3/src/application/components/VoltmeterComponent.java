@@ -1,6 +1,7 @@
 package application.components;
 
 import application.Component;
+import application.ComponentType;
 
 public class VoltmeterComponent extends Component {
 	
@@ -8,6 +9,11 @@ public class VoltmeterComponent extends Component {
 	private double voltage;
 	
 	public VoltmeterComponent() {
+		this.voltage = 0.0;
+	}
+	
+	public VoltmeterComponent(String id, double xVal, double yVal, ComponentType type) {
+		super( id,  xVal,  yVal,  type);
 		this.voltage = 0.0;
 	}
 	

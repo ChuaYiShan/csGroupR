@@ -129,14 +129,49 @@ public class RootLayout extends AnchorPane{
 
 		for(CircuitElement element: myArrayList)
 		{
-			Component newNode = new Component(element.id, element.xCoord, 
-					element.yCoord, ComponentType.Ammeter);
+			Component component = null;
+			
+			ComponentType componentType = element.getType();
+			String componentTypeString = componentType.toString();
+			
+			if(componentTypeString.equals("Ammeter")){
+				component = new AmmeterComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((AmmeterComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("Battery")){
+				component = new BatteryComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((BatteryComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("Button")){
+				component = new ButtonComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((ButtonComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("LED")){
+				component = new LEDComponent(element.id, element.xCoord, element.yCoord, element.getType()); 
+				((LEDComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("Relay")){
+				component = new RelayComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((RelayComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("Resistor")){
+				component = new ResistorComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((ResistorComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("Switch")){
+				component = new SwitchComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((SwitchComponent) component).setName(componentTypeString);
+			}
+			if(componentTypeString.equals("Voltmeter")){
+				component = new VoltmeterComponent(element.id, element.xCoord, element.yCoord, element.getType());
+				((VoltmeterComponent) component).setName(componentTypeString);
+			}
+			
+			System.out.println(component.getLayoutX());			
 
-			System.out.println(newNode.getLayoutX());
-			right_pane.getChildren().add(newNode);
+			right_pane.getChildren().add(component);
+
 		}
-
-
 	}
 
 	private void addDragDetection(ComponentIcon componentIcon) {
