@@ -14,11 +14,13 @@ import application.components.RelayComponent;
 import application.components.ResistorComponent;
 import application.components.SwitchComponent;
 import application.components.VoltmeterComponent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.ClipboardContent;
@@ -27,16 +29,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Window;
-import javafx.scene.control.Button;
 
 public class RootLayout extends AnchorPane{
 
 	@FXML SplitPane base_pane;
 	@FXML AnchorPane right_pane;
 	@FXML VBox left_pane;
-	@FXML TextFlow output;
+	@FXML Text output;
 	@FXML Window myWindow;
 	@FXML ToolBar myToolBar;
 
@@ -90,16 +92,27 @@ public class RootLayout extends AnchorPane{
 		Button openBtn = new Button("Open File");
 		Button saveBtn = new Button("Save File");
 		Button deleteBtn = new Button("Delete File");
+		Button clearBtn = new Button("Clear");
 
 		myToolBar.getItems().addAll(
 				openBtn,
 				saveBtn,
-				deleteBtn
+				deleteBtn,
+				clearBtn
 				);
 
 		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
 		new FileOperations().saveButtonClick(myWindow, saveBtn, right_pane);
 		new FileOperations().deleteFileButtonClick(myWindow, deleteBtn);
+		
+		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				clearNodes();
+			}
+		});
+		
 	}
 
 	private boolean batteryAdded(){
@@ -118,9 +131,10 @@ public class RootLayout extends AnchorPane{
 			list.add(n);
 		}
 		for (Node n : list) {
-			if (n instanceof TextFlow) { continue; }
+			if (n instanceof Text) { continue; }
 			right_pane.getChildren().remove(n);
 		}
+		Output.getInstance().clearOutput();
 	}
 
 	public void loadNodes(String fileName){
@@ -270,7 +284,7 @@ public class RootLayout extends AnchorPane{
 
 				translucentIcon.setVisible(false);
 
-				Output.getInstance().clearOuput();
+				Output.getInstance().clearOutput();
 
 				// Create node drag operation
 				DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);

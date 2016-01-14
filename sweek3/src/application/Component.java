@@ -259,7 +259,7 @@ public class Component extends AnchorPane {
 			@Override
 			public void handle(MouseEvent event) {
 
-				Output.getInstance().clearOuput();
+				Output.getInstance().clearOutput();
 				Output.getInstance().printOutput(self.getType().toString() + " removed.");
 
 				AnchorPane parent  = (AnchorPane) self.getParent();
