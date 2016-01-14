@@ -29,9 +29,10 @@ public class BatteryComponent extends Component {
 
 		            Optional<String> result = dialog.showAndWait();
 		            if (result.isPresent()){
+		            	//replace old value with new value
 		            	setVoltage(Double.parseDouble(result.get()));
 		                System.out.println("Voltage of battery has been changed to " + result.get());
-		                //replace old value with new value 
+		             
 		            }
 
 		        }
