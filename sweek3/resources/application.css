@@ -40,15 +40,6 @@
 	-fx-background-size: 100% 100%
 }
 
-.icon-relay {
-	-fx-background-image: url('./images/relay.gif');
-	-fx-background-size: 100% 100%
-}
-
-.icon-black {
-	-fx-background-color: black;
-}
-
 .icon-resistor {
 	-fx-background-image: url('./images/resistor.gif');
 	-fx-background-size: 100% 100%

@@ -66,10 +66,6 @@ public class ComponentIcon extends AnchorPane{
 			getStyleClass().add("icon-button");			
 			break;
 
-		case Relay:
-			getStyleClass().add("icon-relay");
-			break;
-
 		case Resistor:
 			getStyleClass().add("icon-resistor");
 			break;
