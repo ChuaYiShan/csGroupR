@@ -41,7 +41,7 @@ public class FileParser {
 				public void startElement(String uri, String localName,String qName, 
 						Attributes attributes) throws SAXException {
 
-					System.out.println("Start Element :" + qName);
+				//	System.out.println("Start Element :" + qName);
 
 					if (qName.equalsIgnoreCase("nodes")) {
 						tmpElement = new CircuitElement();
@@ -64,7 +64,7 @@ public class FileParser {
 				}
 
 				public void endElement(String uri, String localName, String qName) throws SAXException {
-					System.out.println("End Element :" + qName);
+		//			System.out.println("End Element :" + qName);
 				}
 
 				public void characters(char ch[], int start, int length) throws SAXException {

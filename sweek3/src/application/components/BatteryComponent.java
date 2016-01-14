@@ -3,6 +3,7 @@ package application.components;
 import java.util.Optional;
 
 import application.Component;
+import application.ComponentType;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
@@ -13,6 +14,37 @@ public class BatteryComponent extends Component {
 	private double voltage;
 	
 	public BatteryComponent() {
+		this.voltage = 9.0;		
+		this.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+		    @Override
+		    public void handle(MouseEvent mouseEvent)
+		    {            
+		        if(mouseEvent.getClickCount() == 2)
+		        {
+		            System.out.println("Clicked");
+		            TextInputDialog dialog = new TextInputDialog(String.valueOf(getVoltage())); //this will be different for every component 
+		            dialog.setTitle("Edit Battery Voltage");
+		            dialog.setHeaderText("Change the voltage of the battery.");
+		            dialog.setContentText("Please enter the new value:");
+
+		            Optional<String> result = dialog.showAndWait();
+		            if (result.isPresent()){
+		            	//replace old value with new value
+		            	setVoltage(Double.parseDouble(result.get()));
+		                System.out.println("Voltage of battery has been changed to " + result.get());
+		             
+		            }
+
+		        }
+		    }
+		});
+	}
+	
+	public BatteryComponent(String id, double xVal, double yVal, ComponentType type) {
+		
+		super( id,  xVal,  yVal,  type);
+		
 		this.voltage = 9.0;		
 		this.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{

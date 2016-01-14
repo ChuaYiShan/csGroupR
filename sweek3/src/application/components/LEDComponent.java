@@ -1,6 +1,7 @@
 package application.components;
 
 import application.Component;
+import application.ComponentType;
 
 public class LEDComponent extends Component {
 	
@@ -8,6 +9,11 @@ public class LEDComponent extends Component {
 	private boolean on;
 	
 	public LEDComponent() {
+		this.on = false;
+	}
+	
+	public LEDComponent(String id, double xVal, double yVal, ComponentType type) {
+		super( id,  xVal,  yVal,  type);
 		this.on = false;
 	}
 	
