@@ -129,14 +129,40 @@ public class RootLayout extends AnchorPane{
 
 		for(CircuitElement element: myArrayList)
 		{
-			Component newNode = new Component(element.id, element.xCoord, 
-					element.yCoord, ComponentType.Ammeter);
-
-			System.out.println(newNode.getLayoutX());
-			right_pane.getChildren().add(newNode);
+			if (!element.getType().equalsIgnoreCase("WIRE")) {
+				Component newNode = new Component(element.getId(), element.getxCoord(), 
+						element.getyCoord(), ComponentType.Ammeter);
+				right_pane.getChildren().add(newNode);
+			}
+		}
+		
+		for(CircuitElement element: myArrayList)
+		{
+			if (element.getType().equalsIgnoreCase("WIRE")) {
+				Component source = findComponent(element.getSource());
+				Component target = findComponent(element.getTarget());
+				Wire wire = new Wire(element.getId());
+				right_pane.getChildren().add(0,wire);
+				wire.bindEnds(source, target);
+				wire.setVisible(true);		
+			}
 		}
 
-
+	}
+	
+	private Component findComponent(String id){
+		
+		Component component = null;
+		for (Node node : right_pane.getChildren()){
+			if (node instanceof Component) {
+				Component c = (Component) node;
+				if (c.getId().equals(id) ) {
+					return c;
+				}
+			}
+			
+		}
+		return component;
 	}
 
 	private void addDragDetection(ComponentIcon componentIcon) {
@@ -330,7 +356,6 @@ public class RootLayout extends AnchorPane{
 							if (n.getId().equals(targetId)) { target = (Component) n; }
 
 						}
-
 
 						if (target == source && source.getType() != ComponentType.Voltmeter) {
 
