@@ -14,7 +14,7 @@ public class ResistorComponent extends Component {
 	private boolean on;
 	
 	public ResistorComponent() {
-		this.resistance = 0.0;
+		this.resistance = 100.0;
 		this.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
 		    @Override

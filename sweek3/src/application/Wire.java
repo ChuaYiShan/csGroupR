@@ -177,6 +177,7 @@ public class Wire extends AnchorPane {
 		}
 			
 		source.addTargetComponent(target);
+		target.addSourceComponent(source);
 		
 		source.registerWire(getId());
 		target.registerWire(getId());

@@ -13,7 +13,7 @@ public class BatteryComponent extends Component {
 	private double voltage;
 	
 	public BatteryComponent() {
-		this.voltage = 0.0;		
+		this.voltage = 9.0;		
 		this.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
 		    @Override

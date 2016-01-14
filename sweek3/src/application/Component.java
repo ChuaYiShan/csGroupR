@@ -48,7 +48,9 @@ public class Component extends AnchorPane {
 	private final List<String> linkedWireIDs = new ArrayList<String>();
 	private final List<Component> connectedComponentList = new ArrayList<Component>();
 	private final List<Component> targetComponentList = new ArrayList<Component>();
+	private final List<Component> sourceComponentList = new ArrayList<Component>();
 
+	
 	public Component() {
 
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Component.fxml"));
@@ -118,7 +120,19 @@ public class Component extends AnchorPane {
 	public List<Component> getTargetComponentList() {
 		return this.targetComponentList;
 	}
-
+	
+	public void addSourceComponent(Component component){
+		sourceComponentList.add(component);
+	}
+	
+	public void deleteSourceComponent(Component component){
+		sourceComponentList.remove(component);
+	}
+	
+	public List<Component> getSourceComponentList() {
+		return this.sourceComponentList;
+	}
+	
 	public void registerWire(String linkId) {
 		linkedWireIDs.add(linkId);
 	}
@@ -256,6 +270,7 @@ public class Component extends AnchorPane {
 				for(Component component : connectedComponentList) {
 					component.unregisterComponent(self);
 					component.deleteTargetComponent(self);
+					self.deleteSourceComponent(component);
 				}
 				
 			}
