@@ -48,9 +48,6 @@ public class CircuitElement {
 		if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAHQmF0dGVyeQ==")==0) {
 			this.aType = ComponentType.Battery;
 		}
-		else if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAGQnV0dG9u")==0) {
-			this.aType = ComponentType.Button;
-		}
 		else if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAADTEVE")==0){
 			this.aType = ComponentType.LED;
 		}

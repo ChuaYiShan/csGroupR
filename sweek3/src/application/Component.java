@@ -190,10 +190,6 @@ public class Component extends AnchorPane {
 			getStyleClass().add("icon-battery");
 			break;
 
-		case Button:
-			getStyleClass().add("icon-button");			
-			break;
-
 		case Resistor:
 			getStyleClass().add("icon-resistor");
 			break;

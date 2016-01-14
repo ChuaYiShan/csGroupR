@@ -7,7 +7,6 @@ import java.util.List;
 
 import application.components.AmmeterComponent;
 import application.components.BatteryComponent;
-import application.components.ButtonComponent;
 import application.components.LEDComponent;
 import application.components.ResistorComponent;
 import application.components.SwitchComponent;
@@ -191,10 +190,6 @@ public class RootLayout extends AnchorPane{
 					component = new BatteryComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
 					((BatteryComponent) component).setName(componentTypeString);
 				}
-				if(componentTypeString.equals("Button")){
-					component = new ButtonComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
-					((ButtonComponent) component).setName(componentTypeString);
-				}
 				if(componentTypeString.equals("LED")){
 					component = new LEDComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType()); 
 					((LEDComponent) component).setName(componentTypeString);
@@ -370,11 +365,6 @@ public class RootLayout extends AnchorPane{
 
 							component = new BatteryComponent();
 							((BatteryComponent) component).setName(componentName);
-
-						} else if (componentName.equals("Button")) {
-
-							component = new ButtonComponent();
-							((ButtonComponent) component).setName(componentName);
 
 						} else if (componentName.equals("LED")) {
 
