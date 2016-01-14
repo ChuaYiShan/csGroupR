@@ -67,9 +67,31 @@ public class Component extends AnchorPane {
 
 	}
 
+	public Component(String id, double xVal, double yVal, ComponentType type)
+	{	
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Component.fxml"));
+		fxmlLoader.setRoot(this); 
+		fxmlLoader.setController(this);
+
+		self = this;
+
+		try { 
+			fxmlLoader.load();        
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+		
+		self.setId(id);
+		self.setVisible(true);
+		self.setType(type);
+		self.setLayoutX(xVal);
+		self.setLayoutY(yVal);
+	}
+
 	@FXML
 	private void initialize() {
-
+		
+		System.out.print("Component init");
 		buildNodeDragHandlers();
 		buildWireDragHandlers();
 
@@ -94,27 +116,27 @@ public class Component extends AnchorPane {
 		});
 
 	}
-	
+
 	public void registerComponent(Component component){
 		connectedComponentList.add(component);
 	}
-	
+
 	public void unregisterComponent(Component component){
 		connectedComponentList.remove(component);
 	}
-	
+
 	public List<Component> getConnectedComponentList() {
 		return this.connectedComponentList;
 	}
-	
+
 	public void addTargetComponent(Component component){
 		targetComponentList.add(component);
 	}
-	
+
 	public void deleteTargetComponent(Component component){
 		targetComponentList.remove(component);
 	}
-	
+
 	public List<Component> getTargetComponentList() {
 		return this.targetComponentList;
 	}
@@ -173,15 +195,15 @@ public class Component extends AnchorPane {
 		case LED:
 			getStyleClass().add("icon-led");
 			break;
-			
+
 		case Ammeter:
 			getStyleClass().add("icon-led");
 			break;
-		
+
 		case Voltmeter:
 			getStyleClass().add("icon-led");
 			break;
-			
+
 		default:
 			break;
 		}
@@ -222,10 +244,10 @@ public class Component extends AnchorPane {
 
 			@Override
 			public void handle(MouseEvent event) {
-				
+
 				Output.getInstance().clearOuput();
 				Output.getInstance().printOutput(self.getType().toString() + " removed.");
-				
+
 				AnchorPane parent  = (AnchorPane) self.getParent();
 				parent.getChildren().remove(self);
 
@@ -252,12 +274,12 @@ public class Component extends AnchorPane {
 
 					iterId.remove();
 				}
-				
+
 				for(Component component : connectedComponentList) {
 					component.unregisterComponent(self);
 					component.deleteTargetComponent(self);
 				}
-				
+
 			}
 
 		});
