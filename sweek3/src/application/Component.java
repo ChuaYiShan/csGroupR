@@ -6,14 +6,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-import application.components.AmmeterComponent;
-import application.components.BatteryComponent;
-import application.components.ButtonComponent;
-import application.components.LEDComponent;
-import application.components.RelayComponent;
-import application.components.ResistorComponent;
-import application.components.SwitchComponent;
-import application.components.VoltmeterComponent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;

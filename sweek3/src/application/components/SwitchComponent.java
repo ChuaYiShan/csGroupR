@@ -1,11 +1,8 @@
 package application.components;
 
-import java.util.Optional;
-
 import application.Component;
 import application.ComponentType;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 
 public class SwitchComponent extends Component {

@@ -1,14 +1,5 @@
 package application;
 
-import application.components.AmmeterComponent;
-import application.components.BatteryComponent;
-import application.components.ButtonComponent;
-import application.components.LEDComponent;
-import application.components.RelayComponent;
-import application.components.ResistorComponent;
-import application.components.SwitchComponent;
-import application.components.VoltmeterComponent;
-
 public class CircuitElement {
 	
 	private String id;
