@@ -49,10 +49,35 @@ class FileCreate implements Serializable {
 
 			xMLStreamWriter.writeStartDocument();
 
-			xMLStreamWriter.writeStartElement("DummyItem");
+			xMLStreamWriter.writeStartElement("Circuit");
 
 			for (Node aNode: right_pane.getChildren())
 			{
+				
+				if (aNode instanceof Wire) {
+					
+					Wire wire = (Wire) aNode;
+					
+					xMLStreamWriter.writeStartElement("Wire");
+					xMLStreamWriter.writeAttribute("ID", wire.getId());
+
+					xMLStreamWriter.writeStartElement("source");
+					xMLStreamWriter.writeCharacters(String.valueOf(wire.getSource().getId()));
+					xMLStreamWriter.writeEndElement();
+
+					xMLStreamWriter.writeStartElement("target");
+					xMLStreamWriter.writeCharacters(String.valueOf(wire.getTarget().getId()));
+					xMLStreamWriter.writeEndElement();
+					
+					xMLStreamWriter.writeStartElement("type");
+					xMLStreamWriter.writeCharacters("WIRE");
+					xMLStreamWriter.writeEndElement();
+					
+					xMLStreamWriter.writeEndElement();
+					
+				}	
+				
+				
 				if (!(aNode.getLayoutX() > 0.0)) {
 					continue;
 				}
@@ -61,29 +86,34 @@ class FileCreate implements Serializable {
 					continue;
 				}
 				
-				Component c = (Component) aNode;
+				if (aNode instanceof Component) {
+					
+					Component c = (Component) aNode;
+					
+					xMLStreamWriter.writeStartElement("Node");
+					xMLStreamWriter.writeAttribute("ID", c.getId());
+
+					xMLStreamWriter.writeStartElement("xCoord");
+					xMLStreamWriter.writeCharacters(String.valueOf(c.getLayoutX()));
+					xMLStreamWriter.writeEndElement();
+
+					xMLStreamWriter.writeStartElement("yCoord");
+					xMLStreamWriter.writeCharacters(String.valueOf(c.getLayoutY()));
+					xMLStreamWriter.writeEndElement();
+
+					xMLStreamWriter.writeStartElement("type");
+					xMLStreamWriter.writeCharacters(objToString(c.getType()));
+					xMLStreamWriter.writeEndElement();
+					
+					xMLStreamWriter.writeEndElement();
+					
+				}
 				
-				xMLStreamWriter.writeStartElement("Nodes");
-				xMLStreamWriter.writeAttribute("ID", c.getId());
-
-				xMLStreamWriter.writeStartElement("xCoord");
-				xMLStreamWriter.writeCharacters(String.valueOf(c.getLayoutX()));
-				xMLStreamWriter.writeEndElement();
-
-				xMLStreamWriter.writeStartElement("yCoord");
-				xMLStreamWriter.writeCharacters(String.valueOf(c.getLayoutY()));
-				xMLStreamWriter.writeEndElement();
-
-				xMLStreamWriter.writeStartElement("type");
-				xMLStreamWriter.writeCharacters(objToString(c.getType()));
-				xMLStreamWriter.writeEndElement();
-
-				xMLStreamWriter.writeEndElement();
+			//	xMLStreamWriter.writeEndElement();
 			}
 
 			xMLStreamWriter.writeEndElement();
 
-			//////////
 			xMLStreamWriter.writeEndDocument();
 
 			xMLStreamWriter.flush();

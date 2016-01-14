@@ -14,11 +14,13 @@ import application.components.RelayComponent;
 import application.components.ResistorComponent;
 import application.components.SwitchComponent;
 import application.components.VoltmeterComponent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.ClipboardContent;
@@ -27,16 +29,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Window;
-import javafx.scene.control.Button;
 
 public class RootLayout extends AnchorPane{
 
 	@FXML SplitPane base_pane;
 	@FXML AnchorPane right_pane;
 	@FXML VBox left_pane;
-	@FXML TextFlow output;
+	@FXML Text output;
 	@FXML Window myWindow;
 	@FXML ToolBar myToolBar;
 
@@ -90,16 +92,27 @@ public class RootLayout extends AnchorPane{
 		Button openBtn = new Button("Open File");
 		Button saveBtn = new Button("Save File");
 		Button deleteBtn = new Button("Delete File");
+		Button clearBtn = new Button("Clear");
 
 		myToolBar.getItems().addAll(
 				openBtn,
 				saveBtn,
-				deleteBtn
+				deleteBtn,
+				clearBtn
 				);
 
 		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
 		new FileOperations().saveButtonClick(myWindow, saveBtn, right_pane);
 		new FileOperations().deleteFileButtonClick(myWindow, deleteBtn);
+		
+		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				clearNodes();
+			}
+		});
+		
 	}
 
 	private boolean batteryAdded(){
@@ -118,9 +131,10 @@ public class RootLayout extends AnchorPane{
 			list.add(n);
 		}
 		for (Node n : list) {
-			if (n instanceof TextFlow) { continue; }
+			if (n instanceof Text) { continue; }
 			right_pane.getChildren().remove(n);
 		}
+		Output.getInstance().clearOutput();
 	}
 
 	public void loadNodes(String fileName){
@@ -129,49 +143,82 @@ public class RootLayout extends AnchorPane{
 
 		for(CircuitElement element: myArrayList)
 		{
-			Component component = null;
-			
-			ComponentType componentType = element.getType();
-			String componentTypeString = componentType.toString();
-			
-			if(componentTypeString.equals("Ammeter")){
-				component = new AmmeterComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((AmmeterComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("Battery")){
-				component = new BatteryComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((BatteryComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("Button")){
-				component = new ButtonComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((ButtonComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("LED")){
-				component = new LEDComponent(element.id, element.xCoord, element.yCoord, element.getType()); 
-				((LEDComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("Relay")){
-				component = new RelayComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((RelayComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("Resistor")){
-				component = new ResistorComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((ResistorComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("Switch")){
-				component = new SwitchComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((SwitchComponent) component).setName(componentTypeString);
-			}
-			if(componentTypeString.equals("Voltmeter")){
-				component = new VoltmeterComponent(element.id, element.xCoord, element.yCoord, element.getType());
-				((VoltmeterComponent) component).setName(componentTypeString);
-			}
-			
-			System.out.println(component.getLayoutX());			
-
-			right_pane.getChildren().add(component);
+			if (!element.getStringType().equalsIgnoreCase("WIRE")) {
+				
+				Component component = null;
+				
+				ComponentType componentType = element.getType();
+				String componentTypeString = componentType.toString();
+				
+				if(componentTypeString.equals("Ammeter")){
+					component = new AmmeterComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((AmmeterComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("Battery")){
+					component = new BatteryComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((BatteryComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("Button")){
+					component = new ButtonComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((ButtonComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("LED")){
+					component = new LEDComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType()); 
+					((LEDComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("Relay")){
+					component = new RelayComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((RelayComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("Resistor")){
+					component = new ResistorComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((ResistorComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("Switch")){
+					component = new SwitchComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((SwitchComponent) component).setName(componentTypeString);
+				}
+				if(componentTypeString.equals("Voltmeter")){
+					component = new VoltmeterComponent(element.getId(), element.getxCoord(), element.getyCoord(), element.getType());
+					((VoltmeterComponent) component).setName(componentTypeString);
+				}
+				
+				System.out.println(component.getLayoutX());			
+	
+				right_pane.getChildren().add(component);
+				
+				}
 
 		}
+		
+		for(CircuitElement element: myArrayList)
+		{
+			if (element.getStringType().equalsIgnoreCase("WIRE")) {
+				Component source = findComponent(element.getSource());
+				Component target = findComponent(element.getTarget());
+				Wire wire = new Wire(element.getId());
+				right_pane.getChildren().add(0,wire);
+				wire.bindEnds(source, target);
+				wire.setVisible(true);		
+			}
+		}
+
+
+	}
+	
+	private Component findComponent(String id){
+		
+		Component component = null;
+		for (Node node : right_pane.getChildren()){
+			if (node instanceof Component) {
+				Component c = (Component) node;
+				if (c.getId().equals(id) ) {
+					return c;
+				}
+			}
+			
+		}
+		return component;
 	}
 
 	private void addDragDetection(ComponentIcon componentIcon) {
@@ -279,7 +326,7 @@ public class RootLayout extends AnchorPane{
 
 				translucentIcon.setVisible(false);
 
-				Output.getInstance().clearOuput();
+				Output.getInstance().clearOutput();
 
 				// Create node drag operation
 				DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
@@ -365,7 +412,6 @@ public class RootLayout extends AnchorPane{
 							if (n.getId().equals(targetId)) { target = (Component) n; }
 
 						}
-
 
 						if (target == source && source.getType() != ComponentType.Voltmeter) {
 

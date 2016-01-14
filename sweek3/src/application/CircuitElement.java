@@ -11,19 +11,35 @@ import application.components.VoltmeterComponent;
 
 public class CircuitElement {
 	
-	String id;
-	Double xCoord;
-	Double yCoord;
+	private String id;
+	
+	private double xCoord, yCoord;
 	String type;
+	
+	private String source, target;
+	
 	private ComponentType aType;
 
 	public CircuitElement(){
+	}
+	
+	public String getId(){
+		return this.id;
 	}
 
 	public void setId (String id){
 		this.id = id;
 	}
+	
+	public double getxCoord() {
+		return xCoord;
+	}
 
+	public double getyCoord() {
+		return yCoord;
+	}
+
+	
 	public void setxCoord (String xCoord){
 		this.xCoord = Double.parseDouble(xCoord);
 	}
@@ -36,9 +52,9 @@ public class CircuitElement {
 		this.type = type;
 	}
 
-	public ComponentType getType ()
+	public ComponentType getType()
 	{
-			if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAHQmF0dGVyeQ==")==0) {
+		if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAHQmF0dGVyeQ==")==0) {
 			this.aType = ComponentType.Battery;
 		}
 		else if (type.compareTo("rO0ABX5yABlhcHBsaWNhdGlvbi5Db21wb25lbnRUeXBlAAAAAAAAAAASAAB4cgAOamF2YS5sYW5nLkVudW0AAAAAAAAAABIAAHhwdAAGQnV0dG9u")==0) {
@@ -65,9 +81,29 @@ public class CircuitElement {
 		else {
 			this.aType = null;
 		}
-		 	return aType;
+
+		return aType;
+
 	}
 	
-	
-	
+	public String getStringType() {
+		return this.type;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
 }

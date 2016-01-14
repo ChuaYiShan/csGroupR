@@ -24,7 +24,7 @@ public class FileParser {
 	}
 
 	public ArrayList<CircuitElement> parse (String fileName){
-		
+
 		newList = new ArrayList<CircuitElement>();
 
 		try {
@@ -34,64 +34,84 @@ public class FileParser {
 
 			DefaultHandler handler = new DefaultHandler() {
 
-				boolean b2 = false;
-				boolean b3 = false;
-				boolean b4 = false;
+				boolean xcoord = false;
+				boolean ycoord = false;
+				boolean source = false;
+				boolean target = false;
+				boolean type = false;
 
 				public void startElement(String uri, String localName,String qName, 
 						Attributes attributes) throws SAXException {
 
-				//	System.out.println("Start Element :" + qName);
-
-					if (qName.equalsIgnoreCase("nodes")) {
+					if (qName.equalsIgnoreCase("node") || qName.equalsIgnoreCase("wire")) {
 						tmpElement = new CircuitElement();
 						tmpElement.setId(attributes.getValue("ID"));
 						newList.add(tmpElement);
 					}
 
 					if (qName.equalsIgnoreCase("XCOORD")) {
-						b2 = true;
+						xcoord = true;
 					}
 
 					if (qName.equalsIgnoreCase("YCOORD")) {
-						b3 = true;
+						ycoord = true;
+					}
+
+					if (qName.equalsIgnoreCase("source")) {
+						source = true;
+					}
+
+					if (qName.equalsIgnoreCase("target")) {
+						target = true;
 					}
 
 					if (qName.equalsIgnoreCase("TYPE")) {
-						b4 = true;
+						type = true;
 					}
 
 				}
 
 				public void endElement(String uri, String localName, String qName) throws SAXException {
-		//			System.out.println("End Element :" + qName);
+					// System.out.println("End Element :" + qName);
 				}
 
 				public void characters(char ch[], int start, int length) throws SAXException {
 
-					if (b2) {
+					if (xcoord) {
 						//System.out.println("X: " + new String(ch, start, length));
 						tmpElement.setxCoord(new String(ch,start,length));
-						b2 = false;
+						xcoord = false;
 					}
 
-					if (b3) {
+					if (ycoord) {
 						//	System.out.println("Y: " + new String(ch, start, length));
 						tmpElement.setyCoord(new String(ch,start,length));
-						b3 = false;
+						ycoord = false;
 					}
 
-					if (b4) {
+					if (source) {
+						//	System.out.println("Y: " + new String(ch, start, length));
+						tmpElement.setSource(new String(ch,start,length));
+						source = false;
+					}
+
+					if (target) {
+						//	System.out.println("Y: " + new String(ch, start, length));
+						tmpElement.setTarget(new String(ch,start,length));
+						target = false;
+					}
+
+					if (type) {
 						//		System.out.println("Type: " + new String(ch, start, length));
 						tmpElement.setType(new String(ch,start,length));
-						b4 = false;
+						type = false;
 					}
 
 					//	System.out.println("char");
 
 				}
 			};
-			
+
 			saxParser.parse(fileName, handler);
 
 		} catch (Exception e) {
