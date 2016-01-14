@@ -59,3 +59,11 @@
 	-fx-background-image: url('./images/switch.gif');
 	-fx-background-size: 100% 100% 
 }
+.icon-ammeter {
+	-fx-background-image: url('./images/ammeter.gif');
+	-fx-background-size: 100% 100% 
+}
+.icon-voltmeter {
+	-fx-background-image: url('./images/voltmeter.gif');
+	-fx-background-size: 100% 100% 
+}
