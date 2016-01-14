@@ -30,7 +30,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Window;
 
 public class RootLayout extends AnchorPane{
@@ -93,12 +92,17 @@ public class RootLayout extends AnchorPane{
 		Button saveBtn = new Button("Save File");
 		Button deleteBtn = new Button("Delete File");
 		Button clearBtn = new Button("Clear");
+		Button runBtn = new Button("Run");
+		
+		Text result = new Text();
 
 		myToolBar.getItems().addAll(
 				openBtn,
 				saveBtn,
 				deleteBtn,
-				clearBtn
+				clearBtn,
+				runBtn,
+				result
 				);
 
 		new FileOperations().openFileButtonClick(myWindow, openBtn, this);
@@ -110,6 +114,16 @@ public class RootLayout extends AnchorPane{
 			@Override
 			public void handle(ActionEvent event) {
 				clearNodes();
+			}
+		});
+		
+		runBtn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				ArrayList<String> values = runGetValues();
+				result.setText(values.get(1));
+				
 			}
 		});
 		
@@ -415,29 +429,43 @@ public class RootLayout extends AnchorPane{
 
 				}
 
-				BatteryComponent battery = null;
-				for (Node node : right_pane.getChildren()){
-					if (node instanceof BatteryComponent) {
-						battery = (BatteryComponent) node;
-					}
-				}
-
-				if (battery != null) {
-					System.out.println("===");
-					pathCollections = new ArrayList<ArrayList<Component>>();
-					runCircuit(battery, battery, new ArrayList<Component>(), -1);
-					System.out.println("Total Voltage: " + battery.getVoltage());
-					double resistance = calculateResistance(pathCollections);
-					System.out.println("Total Resistance: " + resistance);
-					System.out.println("Total Current: " + battery.getVoltage()/resistance);
-				}
-
 				event.consume();
 			}
 		});		
 	}
-
+	
 	ArrayList<ArrayList<Component>> pathCollections = new ArrayList<ArrayList<Component>>();
+	
+	public ArrayList<String> runGetValues(){
+		
+		ArrayList<String> values = new ArrayList<String>();
+		
+		BatteryComponent battery = null;
+		for (Node node : right_pane.getChildren()){
+			if (node instanceof BatteryComponent) {
+				battery = (BatteryComponent) node;
+			}
+		}
+		
+		if (battery != null) {
+			
+			pathCollections = new ArrayList<ArrayList<Component>>();
+			runCircuit(battery, battery, new ArrayList<Component>(), -1);
+			if (pathCollections.size() == 0) { return values; }
+			
+			double resistance = calculateResistance(pathCollections);
+			values.add("" + (battery.getVoltage()));
+			values.add("" + (resistance));
+			values.add("" + (battery.getVoltage())/(resistance));
+			
+			// System.out.println("Total Voltage: " + battery.getVoltage());
+			// System.out.println("Total Resistance: " + resistance);
+			// System.out.println("Total Current: " + battery.getVoltage()/resistance);
+		}
+		
+		return values;
+		
+	}
 
 	public void runCircuit(Component starting, Component current, ArrayList<Component> path, int counter) {
 
