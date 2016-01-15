@@ -103,7 +103,7 @@ public class RootLayout extends AnchorPane{
 		TextField resistanceField = new TextField();
 		resistanceField.setDisable(true);
 		resistanceField.setPrefWidth(70);
-		TextField currentField = new TextField();
+		Button currentField = new Button();
 		currentField.setDisable(true);
 		currentField.setPrefWidth(70);
 
