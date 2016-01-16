@@ -56,9 +56,18 @@ public class Ammeter extends Component {
 				// System.out.println(((Resistor) currentComponent).getVoltage());
 				this.current = ((Resistor) currentComponent).getVoltage() / 
 						((Resistor) currentComponent).getResistance(); 
+				return;
 			}
 			if (currentComponent.getTargetComponentList().size() == 1) {
 				next = currentComponent.getTargetComponentList().get(0);
+			}
+		}
+		
+		if (next.getSourceComponentList().size() > 1) {
+			if (currentComponent.getSourceComponentList().get(0) instanceof Resistor){
+				Resistor resistor = (Resistor) currentComponent.getSourceComponentList().get(0);
+				this.current = resistor.getVoltage() / resistor.getResistance();  
+				return;
 			}
 		}
 
@@ -67,10 +76,11 @@ public class Ammeter extends Component {
 			if (currentComponent.getSourceComponentList().size() > 1){
 				this.current = circuitCurrent;
 			} else {
-				Resistor resistor = (Resistor) currentComponent.getSourceComponentList().get(0);
-				this.current = resistor.getVoltage() / resistor.getResistance();  
+				if (currentComponent.getSourceComponentList().get(0) instanceof Resistor){
+					Resistor resistor = (Resistor) currentComponent.getSourceComponentList().get(0);
+					this.current = resistor.getVoltage() / resistor.getResistance();  
+				}
 			}
-
 		}
 
 	}

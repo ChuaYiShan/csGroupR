@@ -52,6 +52,7 @@ public class Calculator {
 
 	public static void setAmmeter(AnchorPane right_pane, double circuitCurrent){	
 		for (Node n : right_pane.getChildren()){
+			if (n instanceof Resistor) { continue; }
 			if (n instanceof Ammeter){
 				((Ammeter) n).setCurrent(circuitCurrent);
 			}
